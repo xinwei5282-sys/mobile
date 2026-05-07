@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>团队管理 - KOC 团队管理</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+      background: #f4f5f7;
+    }
+
+    #app {
+      width: 100%;
+      min-height: 100vh;
+    }
+
+    .koc-team-page {
+      display: flex;
+      flex-direction: column;
+      width: 100vw;
+      min-height: 100vh;
+      background: #f4f5f7;
+    }
+
+    .page-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 56px;
+      background: #fff;
+      border-bottom: 1px solid #eee;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 0 16px;
+    }
+
+    .btn-back {
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      color: #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+
+    .btn-back:active {
+      opacity: 0.6;
+    }
+
+    .header-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+      margin: 0;
+      flex: 1;
+      text-align: center;
+    }
+
+    .header-spacer {
+      width: 32px;
+    }
+
+    .page-content {
+      flex: 1;
+      overflow-y: auto;
+      padding-top: 56px;
+      padding-bottom: 20px;
+    }
+
+    .team-statistic-card {
+      display: flex;
+      align-items: center;
+      margin: 16px;
+      padding: 20px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      overflow: hidden;
+    }
+
+    .stat-item {
+      flex: 1;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 22px;
+      font-weight: 600;
+      color: #0052ff;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #999;
+    }
+
+    .stat-divider {
+      width: 1px;
+      height: 40px;
+      background: #eee;
+      margin: 0 12px;
+    }
+
+    .add-member-section {
+      padding: 16px;
+    }
+
+    .btn-add-member {
+      width: 100%;
+      height: 48px;
+      border: 1px solid #0052ff;
+      background: #fff;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      color: #0052ff;
+      transition: all 0.3s ease;
+    }
+
+    .btn-add-member:active {
+      background: #f0f5ff;
+    }
+
+    .btn-add-member .icon {
+      font-size: 16px;
+    }
+
+    .team-members-section {
+      padding: 0 16px 16px;
+    }
+
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px;
+      text-align: center;
+    }
+
+    .empty-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+
+    .empty-text {
+      font-size: 14px;
+      color: #999;
+      margin: 0;
+    }
+
+    .team-member-list {
+      padding: 0;
+    }
+
+    .member-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    .member-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .member-info {
+      flex: 1;
+    }
+
+    .member-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+      margin: 0 0 4px 0;
+    }
+
+    .member-tag {
+      font-size: 12px;
+      background: #f0f5ff;
+      color: #0052ff;
+      border-radius: 4px;
+      padding: 2px 8px;
+      display: inline-block;
+      margin: 4px 0;
+    }
+
+    .member-phone {
+      font-size: 12px;
+      color: #999;
+      margin: 4px 0 0 0;
+    }
+
+    .member-stats {
+      display: flex;
+      gap: 16px;
+      text-align: center;
+    }
+
+    .stat {
+      min-width: 50px;
+    }
+
+    .stat-num {
+      font-size: 16px;
+      font-weight: 600;
+      color: #0052ff;
+      margin-bottom: 4px;
+    }
+
+    .stat-name {
+      font-size: 12px;
+      color: #999;
+    }
+
+    .member-details {
+      background: #f9fafb;
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin-bottom: 12px;
+      font-size: 12px;
+    }
+
+    .detail-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 0;
+    }
+
+    .detail-label {
+      color: #999;
+    }
+
+    .detail-value {
+      color: #333;
+      font-weight: 500;
+    }
+
+    .member-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+
+    .btn-action {
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      background: #fff;
+      font-size: 12px;
+      color: #666;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-action:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-action:not(:disabled):active {
+      background: #f4f5f7;
+    }
+
+    .btn-code, .btn-detail {
+      color: #0052ff;
+      border-color: #0052ff;
+    }
+
+    .btn-code:not(:disabled):active, .btn-detail:not(:disabled):active {
+      background: #f0f5ff;
+    }
+
+    .btn-delete {
+      color: #ff4d4f;
+      border-color: #ffccc7;
+    }
+
+    .btn-delete:not(:disabled):active {
+      background: #fff1f0;
+    }
+
+    .loading-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #f0f5ff;
+      border-top-color: #0052ff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 12px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .loading-state p {
+      font-size: 14px;
+      color: #999;
+      margin: 0;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: flex-end;
+      z-index: 1000;
+      animation: slideInOverlay 0.3s ease-out;
+    }
+
+    @keyframes slideInOverlay {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .modal-content {
+      width: 100%;
+      background: #fff;
+      border-radius: 16px 16px 0 0;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: slideUp 0.3s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(100%);
+      }
+      to {
+        transform: translateY(0);
+      }
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 16px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .modal-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+      margin: 0;
+    }
+
+    .btn-close {
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      color: #999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+
+    .btn-close:active {
+      opacity: 0.6;
+    }
+
+    .modal-body {
+      padding: 20px 16px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 14px;
+      color: #333;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .required {
+      color: #ff4d4f;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #333;
+      background: #fff;
+      box-sizing: border-box;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #0052ff;
+      background: #f9fafb;
+    }
+
+    .form-input::placeholder {
+      color: #999;
+    }
+
+    .tag-tip {
+      font-size: 12px;
+      color: #999;
+      margin-top: 4px;
+    }
+
+    .modal-footer {
+      display: flex;
+      gap: 12px;
+      padding: 20px 16px;
+      border-top: 1px solid #eee;
+    }
+
+    .btn-cancel {
+      flex: 1;
+      height: 40px;
+      border: 1px solid #ddd;
+      background: #fff;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #666;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-cancel:active {
+      background: #f4f5f7;
+    }
+
+    .btn-submit {
+      flex: 1;
+      height: 40px;
+      border: none;
+      background: #0052ff;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-submit:not(:disabled):active {
+      background: #003dd4;
+    }
+
+    .btn-full {
+      width: 100%;
+    }
+
+    .code-display {
+      padding-bottom: 0 !important;
+    }
+
+    .member-info {
+      background: #f4f5f7;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 20px;
+    }
+
+    .info-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .info-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .info-label {
+      font-size: 12px;
+      color: #999;
+      min-width: 60px;
+    }
+
+    .info-value {
+      font-size: 14px;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .invite-code-box {
+      text-align: center;
+      padding: 24px;
+      background: #f9fafb;
+      border: 2px solid #0052ff;
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+
+    .code-label {
+      font-size: 12px;
+      color: #999;
+      margin-bottom: 8px;
+    }
+
+    .code-value {
+      font-size: 24px;
+      font-weight: 600;
+      color: #0052ff;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+      font-family: 'Monaco', 'Courier New', monospace;
+    }
+
+    .code-tip {
+      font-size: 12px;
+      color: #999;
+    }
+
+    .code-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .btn-action-code {
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      background: #fff;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      color: #666;
+      transition: all 0.3s ease;
+    }
+
+    .btn-action-code:active {
+      background: #f4f5f7;
+    }
+
+    .btn-copy:active, .btn-share:active {
+      border-color: #0052ff;
+      color: #0052ff;
+    }
+
+    .btn-action-code .icon {
+      font-size: 20px;
+    }
+
+    .code-instruction {
+      font-size: 12px;
+      color: #999;
+      text-align: center;
+      margin: 0;
+      padding: 12px;
+      background: #f9fafb;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+
+  <script>
+    const { createApp, ref, computed, onMounted } = Vue;
+
+    const TeamStatisticCard = {
+      props: {
+        stats: Object
+      },
+      template: `
+        <div class="team-statistic-card">
+          <div class="stat-item">
+            <div class="stat-value">{{ stats.totalMembers }}</div>
+            <div class="stat-label">总下属数</div>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <div class="stat-value">{{ stats.totalInviteCount }}</div>
+            <div class="stat-label">总邀请数</div>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <div class="stat-value">{{ stats.totalConvertCount }}</div>
+            <div class="stat-label">总转化数</div>
+          </div>
+        </div>
+      `
+    };
+
+    const TeamMemberList = {
+      props: {
+        members: Array,
+        loading: Boolean
+      },
+      emits: ['view-detail', 'view-invite-code', 'delete-member'],
+      setup(props, { emit }) {
+        const deletingId = ref(null);
+
+        const handleViewDetail = (member) => {
+          emit('view-detail', member);
+        };
+
+        const handleViewInviteCode = (member) => {
+          emit('view-invite-code', member);
+        };
+
+        const handleDeleteMember = (member) => {
+          const confirmed = confirm(`确定删除下属？\n删除后，${member.distributorName} 的邀请码将失效，但已有的邀请记录将保留`);
+          if (confirmed) {
+            deletingId.value = member.distributorId;
+            emit('delete-member', member.distributorId);
+            setTimeout(() => { deletingId.value = null; }, 500);
+          }
+        };
+
+        return {
+          deletingId,
+          handleViewDetail,
+          handleViewInviteCode,
+          handleDeleteMember
+        };
+      },
+      template: `
+        <div class="team-member-list">
+          <div v-for="member in members" :key="member.distributorId" class="member-card">
+            <div class="member-header">
+              <div class="member-info">
+                <h3 class="member-name">{{ member.distributorName }}</h3>
+                <p class="member-tag">{{ member.tag }}</p>
+                <p class="member-phone">{{ member.distributorPhone }}</p>
+              </div>
+              <div class="member-stats">
+                <div class="stat">
+                  <div class="stat-num">{{ member.inviteCount }}</div>
+                  <div class="stat-name">邀请</div>
+                </div>
+                <div class="stat">
+                  <div class="stat-num">{{ member.convertCount }}</div>
+                  <div class="stat-name">转化</div>
+                </div>
+              </div>
+            </div>
+            <div class="member-details">
+              <div class="detail-item">
+                <span class="detail-label">已领卡：</span>
+                <span class="detail-value">{{ member.tryCount }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">已入营：</span>
+                <span class="detail-value">{{ member.chatCount }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">加入时间：</span>
+                <span class="detail-value">{{ member.joinTime }}</span>
+              </div>
+            </div>
+            <div class="member-actions">
+              <button class="btn-action btn-code" @click="handleViewInviteCode(member)">查看邀请码</button>
+              <button class="btn-action btn-detail" @click="handleViewDetail(member)">查看详情</button>
+              <button class="btn-action btn-delete" :disabled="deletingId === member.distributorId" @click="handleDeleteMember(member)">
+                {{ deletingId === member.distributorId ? '删除中...' : '删除' }}
+              </button>
+            </div>
+          </div>
+          <div v-if="loading" class="loading-state">
+            <div class="spinner"></div>
+            <p>加载中...</p>
+          </div>
+        </div>
+      `
+    };
+
+    const AddTeamMemberModal = {
+      props: {
+        show: Boolean
+      },
+      emits: ['update:show', 'submit'],
+      setup(props, { emit }) {
+        const formData = ref({
+          distributorName: '',
+          distributorPhone: '',
+          tag: '',
+        });
+
+        const loading = ref(false);
+        const generatedCode = ref('');
+        const inviteCodeExpireTime = ref('');
+        const showCodeResult = ref(false);
+
+        const isFormValid = computed(() => {
+          return (
+            formData.value.distributorName.trim().length > 0 &&
+            formData.value.distributorPhone.trim().length > 0 &&
+            formData.value.tag.trim().length > 0
+          );
+        });
+
+        const isPhoneValid = (phone) => {
+          const phoneRegex = /^1[3-9]\d{9}$/;
+          return phoneRegex.test(phone);
+        };
+
+        const handleGenerateCode = async () => {
+          if (!formData.value.distributorName.trim()) {
+            alert('请输入下属名字');
+            return;
+          }
+
+          if (!formData.value.distributorPhone.trim()) {
+            alert('请输入下属电话');
+            return;
+          }
+
+          if (!isPhoneValid(formData.value.distributorPhone)) {
+            alert('请输入有效的电话号码');
+            return;
+          }
+
+          if (!formData.value.tag.trim()) {
+            alert('请输入标签');
+            return;
+          }
+
+          if (formData.value.tag.length > 50) {
+            alert('标签长度不能超过50个字符');
+            return;
+          }
+
+          loading.value = true;
+          try {
+            generatedCode.value = `KOC_M_${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
+            const now = new Date();
+            now.setDate(now.getDate() + 7);
+            inviteCodeExpireTime.value = now.toLocaleString('zh-CN');
+
+            showCodeResult.value = true;
+            alert('邀请码生成成功');
+
+            setTimeout(() => {
+              emit('submit', {
+                ...formData.value,
+                inviteCode: generatedCode.value,
+              });
+            }, 1000);
+          } catch (error) {
+            console.error('Failed to generate code:', error);
+            alert('生成失败，请重试');
+          } finally {
+            loading.value = false;
+          }
+        };
+
+        const handleCopyCode = () => {
+          navigator.clipboard.writeText(generatedCode.value).then(() => {
+            alert('已复制到剪贴板');
+          });
+        };
+
+        const handleShareCode = () => {
+          if (navigator.share) {
+            navigator.share({
+              title: '邀请加入推广团队',
+              text: `我邀请你加入推广团队，邀请码：${generatedCode.value}，有效期至 ${inviteCodeExpireTime.value}`,
+            });
+          } else {
+            alert('您的浏览器不支持分享功能');
+          }
+        };
+
+        const handleClose = () => {
+          if (showCodeResult.value) {
+            showCodeResult.value = false;
+            generatedCode.value = '';
+            inviteCodeExpireTime.value = '';
+            formData.value = {
+              distributorName: '',
+              distributorPhone: '',
+              tag: '',
+            };
+          }
+          emit('update:show', false);
+        };
+
+        return {
+          formData,
+          loading,
+          generatedCode,
+          inviteCodeExpireTime,
+          showCodeResult,
+          isFormValid,
+          handleGenerateCode,
+          handleCopyCode,
+          handleShareCode,
+          handleClose
+        };
+      },
+      template: `
+        <div v-if="show" class="modal-overlay" @click="handleClose">
+          <div class="modal-content" @click.stop>
+            <div v-if="!showCodeResult" class="form-phase">
+              <div class="modal-header">
+                <h2 class="modal-title">添加下属</h2>
+                <button class="btn-close" @click="handleClose">✕</button>
+              </div>
+              <div class="modal-body">
+                <div class="form-group">
+                  <label class="form-label">下属名字 <span class="required">*</span></label>
+                  <input v-model="formData.distributorName" type="text" class="form-input" placeholder="请输入下属的名字" maxlength="50" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">下属电话 <span class="required">*</span></label>
+                  <input v-model="formData.distributorPhone" type="tel" class="form-input" placeholder="请输入下属的电话号码" maxlength="20" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">标签 <span class="required">*</span></label>
+                  <input v-model="formData.tag" type="text" class="form-input" placeholder="如：微信群1、朋友圈、线下活动" maxlength="50" />
+                  <div class="tag-tip">用于分类管理该下属邀请来的用户</div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button class="btn-cancel" @click="handleClose">取消</button>
+                <button class="btn-submit" :disabled="!isFormValid || loading" @click="handleGenerateCode">
+                  {{ loading ? '生成中...' : '生成邀请码' }}
+                </button>
+              </div>
+            </div>
+
+            <div v-else class="code-phase">
+              <div class="modal-header">
+                <h2 class="modal-title">邀请码已生成</h2>
+                <button class="btn-close" @click="handleClose">✕</button>
+              </div>
+              <div class="modal-body code-display">
+                <div class="member-info">
+                  <div class="info-row">
+                    <span class="info-label">下属名字：</span>
+                    <span class="info-value">{{ formData.distributorName }}</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-label">标签：</span>
+                    <span class="info-value">{{ formData.tag }}</span>
+                  </div>
+                </div>
+                <div class="invite-code-box">
+                  <div class="code-label">邀请码</div>
+                  <div class="code-value">{{ generatedCode }}</div>
+                  <div class="code-tip">有效期至 {{ inviteCodeExpireTime }}</div>
+                </div>
+                <div class="code-actions">
+                  <button class="btn-action-code btn-copy" @click="handleCopyCode">
+                    <span class="icon">📋</span>
+                    <span>复制邀请码</span>
+                  </button>
+                  <button class="btn-action-code btn-share" @click="handleShareCode">
+                    <span class="icon">📤</span>
+                    <span>分享邀请码</span>
+                  </button>
+                </div>
+                <p class="code-instruction">请将邀请码发送给下属，下属拿到码后即可开始推广</p>
+              </div>
+              <div class="modal-footer">
+                <button class="btn-submit btn-full" @click="handleClose">完成</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `
+    };
+
+    const app = createApp({
+      components: {
+        TeamStatisticCard,
+        TeamMemberList,
+        AddTeamMemberModal
+      },
+      setup() {
+        const showAddModal = ref(false);
+        const teamMembers = ref([]);
+        const loading = ref(false);
+
+        const teamStats = ref({
+          totalMembers: 0,
+          totalInviteCount: 0,
+          totalConvertCount: 0,
+        });
+
+        const loadTeamMembers = async (isForce = false) => {
+          if (loading.value) return;
+
+          loading.value = true;
+          try {
+            if (isForce) {
+              teamMembers.value = [
+                {
+                  distributorId: 1,
+                  distributorName: '张三',
+                  distributorPhone: '13812345678',
+                  inviteCode: 'KOC_M_001234',
+                  tag: '微信群1',
+                  joinTime: '2026-05-01 10:30:00',
+                  status: 1,
+                  inviteCount: 28,
+                  convertCount: 10,
+                  tryCount: 20,
+                  chatCount: 8,
+                },
+                {
+                  distributorId: 2,
+                  distributorName: '李四',
+                  distributorPhone: '13912345679',
+                  inviteCode: 'KOC_M_001235',
+                  tag: '朋友圈',
+                  joinTime: '2026-05-02 14:20:00',
+                  status: 1,
+                  inviteCount: 35,
+                  convertCount: 15,
+                  tryCount: 25,
+                  chatCount: 12,
+                },
+              ];
+              teamStats.value = {
+                totalMembers: 2,
+                totalInviteCount: 63,
+                totalConvertCount: 25,
+              };
+            }
+          } catch (error) {
+            console.error('Failed to load team members:', error);
+            alert('加载失败，请重试');
+          } finally {
+            loading.value = false;
+          }
+        };
+
+        const handleDeleteMember = async (distributorId) => {
+          try {
+            alert('删除成功');
+            await loadTeamMembers(true);
+          } catch (error) {
+            console.error('Failed to delete member:', error);
+            alert('删除失败，请重试');
+          }
+        };
+
+        const handleViewDetail = (member) => {
+          alert(`查看详情: ${member.distributorName}`);
+        };
+
+        const handleViewInviteCode = (member) => {
+          alert(`邀请码: ${member.inviteCode}`);
+        };
+
+        const handleAddMember = async (formData) => {
+          try {
+            alert('添加成功');
+            showAddModal.value = false;
+            await loadTeamMembers(true);
+          } catch (error) {
+            console.error('Failed to add member:', error);
+            alert('添加失败，请重试');
+          }
+        };
+
+        onMounted(() => {
+          loadTeamMembers(true);
+        });
+
+        return {
+          showAddModal,
+          teamMembers,
+          loading,
+          teamStats,
+          handleDeleteMember,
+          handleViewDetail,
+          handleViewInviteCode,
+          handleAddMember
+        };
+      },
+      template: `
+        <div class="koc-team-page">
+          <div class="page-header">
+            <div class="header-content">
+              <button class="btn-back" @click="$router?.back?.()">←</button>
+              <h1 class="header-title">团队管理</h1>
+              <div class="header-spacer"></div>
+            </div>
+          </div>
+
+          <div class="page-content">
+            <TeamStatisticCard :stats="teamStats" />
+
+            <div class="add-member-section">
+              <button class="btn-add-member" @click="showAddModal = true">
+                <span class="icon">+</span>
+                <span class="text">添加下属</span>
+              </button>
+            </div>
+
+            <div class="team-members-section">
+              <div v-if="teamMembers.length === 0 && !loading" class="empty-state">
+                <div class="empty-icon">📋</div>
+                <p class="empty-text">还没有下属，点击"添加下属"开始管理团队</p>
+              </div>
+
+              <TeamMemberList
+                v-else
+                :members="teamMembers"
+                :loading="loading"
+                @view-detail="handleViewDetail"
+                @view-invite-code="handleViewInviteCode"
+                @delete-member="handleDeleteMember"
+              />
+            </div>
+          </div>
+
+          <AddTeamMemberModal
+            :show="showAddModal"
+            @update:show="showAddModal = $event"
+            @submit="handleAddMember"
+          />
+        </div>
+      `
+    });
+
+    app.mount('#app');
+  </script>
+</body>
+</html>
