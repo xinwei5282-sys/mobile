@@ -1,8 +1,12 @@
 /**
  * PRD Panel — PRD 面板和触发按钮的定位样式
- * 设计原则：
- *   - 桌面端宽屏（>=768px）：从右侧滑出 380px，主内容向左让位，不遮挡
- *   - 移动端（<768px）：占满全屏，关闭后回到主页面（屏幕太小无法分栏）
+ *
+ * 桌面端宽屏（>=768px）：
+ *   - #app 显示为左侧手机 mock（390×844）
+ *   - PRD 面板占据右侧空间（不与 mock 重叠）
+ * 移动端（<768px）：
+ *   - #app 100% 全屏显示
+ *   - PRD 占满全屏（屏幕太小无法分栏）
  */
 
 /* PRD 触发按钮（始终在屏幕右上角悬浮） */
@@ -23,7 +27,7 @@
   font-weight: 600;
   cursor: pointer;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-  transition: right 0.3s ease, background 0.2s ease, color 0.2s ease;
+  transition: background 0.2s, color 0.2s;
 }
 
 .prd-toggle:active,
@@ -44,27 +48,26 @@ body.prd-on .prd-toggle .dot {
   background: #fff;
 }
 
-/* PRD 面板容器：默认隐藏 */
+/* PRD 面板：默认全屏（移动端表现） */
 .prd-panel {
   position: fixed;
   top: 0;
   right: 0;
   bottom: 0;
-  width: 100%;
+  left: 0;
   z-index: 998;
   background: #fffaf0;
   overflow-y: auto;
   padding: 56px 16px 80px;
   -webkit-overflow-scrolling: touch;
-  transform: translateX(100%);
-  transition: transform 0.3s ease;
+  display: none;
 }
 
 body.prd-on .prd-panel {
-  transform: translateX(0);
+  display: block;
 }
 
-/* PRD 头部 sticky */
+/* 头部 sticky */
 .prd-mobile-header {
   position: sticky;
   top: -56px;
@@ -115,24 +118,49 @@ body.prd-on .prd-panel {
 }
 
 /* ============================================================
- * 桌面端宽屏：PRD 面板从右侧滑出 380px，主内容左移让位
+ * 桌面端宽屏：手机 mock 在左，PRD 在右，不重叠
  * ============================================================ */
 @media (min-width: 768px) {
-  .prd-panel {
-    width: 380px;
+  body {
+    background: #eef0f3;
+    padding: 20px;
+    min-height: 100vh;
+    box-sizing: border-box;
   }
 
-  /* 主内容（#app）整体平滑左移，避免 PRD 遮挡 */
   #app {
-    transition: margin-right 0.3s ease;
+    width: 390px;
+    height: calc(100vh - 40px);
+    max-height: 844px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    flex-shrink: 0;
   }
 
-  body.prd-on #app {
-    margin-right: 380px;
+  /* PRD 面板：占用 mock 右侧空间 */
+  .prd-panel {
+    top: 20px;
+    bottom: 20px;
+    left: 430px;          /* 390 mock + 20 padding + 20 间距 */
+    right: 20px;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    padding: 56px 20px 24px;
   }
 
-  /* 触发按钮跟着面板移动 */
+  body.prd-on .prd-panel {
+    display: block;
+  }
+
+  /* 头部紧贴面板顶部 */
+  .prd-mobile-header {
+    top: -56px;
+    border-radius: 16px 16px 0 0;
+  }
+
+  /* 触发按钮始终右上 */
   body.prd-on .prd-toggle {
-    right: 396px;
+    right: 32px;
   }
 }
