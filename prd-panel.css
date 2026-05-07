@@ -1,0 +1,226 @@
+/**
+ * PRD Panel — 移动端 PRD 标注面板
+ * 用法：在 HTML 引入本文件，添加 PRD 按钮 + 面板结构 + togglePRD() 函数
+ */
+
+/* PRD 触发按钮（固定右上角悬浮） */
+.prd-toggle {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #fff;
+  color: #ff7d00;
+  border: 1px solid #ff7d00;
+  border-radius: 16px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+}
+
+.prd-toggle:active {
+  background: #ff7d00;
+  color: #fff;
+}
+
+.prd-toggle .dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #ff7d00;
+}
+
+.prd-toggle:active .dot {
+  background: #fff;
+}
+
+body.prd-on .prd-toggle {
+  background: #ff7d00;
+  color: #fff;
+}
+
+body.prd-on .prd-toggle .dot {
+  background: #fff;
+}
+
+/* PRD 面板（全屏覆盖） */
+.prd-panel {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 998;
+  background: #fffaf0;
+  overflow-y: auto;
+  padding: 56px 16px 80px;
+  -webkit-overflow-scrolling: touch;
+}
+
+body.prd-on .prd-panel {
+  display: block;
+}
+
+.prd-header {
+  position: sticky;
+  top: -56px;
+  margin: -56px -16px 16px;
+  padding: 14px 16px;
+  background: #fff;
+  border-bottom: 1px solid #f0e6cc;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.prd-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #242528;
+  margin: 0;
+}
+
+.prd-meta {
+  font-size: 11px;
+  color: #999;
+  margin-top: 2px;
+}
+
+/* Section */
+.prd-section {
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0e6cc;
+}
+
+.prd-section:last-of-type {
+  border-bottom: none;
+}
+
+.prd-section-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.prd-section-title.orange {
+  background: #fff7e9;
+  color: #ff7d00;
+}
+
+.prd-section-title.green {
+  background: #e8f5f4;
+  color: #36a590;
+}
+
+.prd-section-title.blue {
+  background: #e8f4ff;
+  color: #327cfb;
+}
+
+.prd-section-title.red {
+  background: #ffede8;
+  color: #f54a45;
+}
+
+/* Label + Item */
+.prd-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #ff7d00;
+  margin-top: 12px;
+  margin-bottom: 4px;
+}
+
+.prd-item {
+  font-size: 12px;
+  line-height: 1.7;
+  color: #3b3d40;
+  margin-bottom: 4px;
+  padding-left: 12px;
+  position: relative;
+}
+
+.prd-item::before {
+  content: '·';
+  position: absolute;
+  left: 4px;
+  color: #999;
+}
+
+.prd-item strong {
+  color: #242528;
+  font-weight: 700;
+}
+
+.prd-sub {
+  font-size: 11px;
+  line-height: 1.6;
+  color: #666;
+  margin-left: 12px;
+  margin-bottom: 4px;
+  padding-left: 12px;
+  position: relative;
+}
+
+.prd-sub::before {
+  content: '◦';
+  position: absolute;
+  left: 0;
+  color: #ccc;
+}
+
+/* 字段表格 */
+.prd-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  margin-top: 6px;
+  margin-bottom: 8px;
+  background: #fff;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.prd-table th,
+.prd-table td {
+  padding: 6px 8px;
+  text-align: left;
+  border: 1px solid #f0e6cc;
+  vertical-align: top;
+}
+
+.prd-table th {
+  background: #fff7e9;
+  font-weight: 600;
+  color: #333;
+}
+
+.prd-table td {
+  color: #3b3d40;
+}
+
+/* 关闭按钮 */
+.prd-close {
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 14px;
+  padding: 4px 12px;
+  font-size: 12px;
+  color: #666;
+  cursor: pointer;
+}
+
+.prd-close:active {
+  background: #f5f5f5;
+}
