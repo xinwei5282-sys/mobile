@@ -1023,6 +1023,90 @@
     .poster-btn.secondary:active {
       background: #e8e8e8;
     }
+
+    /* 删除确认弹窗 */
+    .delete-confirm-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .delete-confirm-content {
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px 20px;
+      max-width: 300px;
+      margin: 0 20px;
+      animation: slideUp 0.3s ease;
+    }
+
+    .delete-confirm-icon {
+      font-size: 48px;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .delete-confirm-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .delete-confirm-message {
+      font-size: 14px;
+      color: #666;
+      text-align: center;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .delete-confirm-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .delete-confirm-btn {
+      height: 44px;
+      padding: 0 16px;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .delete-confirm-btn.cancel {
+      background: #f5f5f5;
+      color: #333;
+    }
+
+    .delete-confirm-btn.cancel:active {
+      background: #e8e8e8;
+    }
+
+    .delete-confirm-btn.delete {
+      background: #ff6b6b;
+      color: #fff;
+    }
+
+    .delete-confirm-btn.delete:active {
+      background: #ff5252;
+    }
   </style>
 </head>
 <body>
@@ -1043,6 +1127,8 @@
         const generatedInviteCode = ref('');
         const showInvitePosterModal = ref(false);
         const selectedMember = ref(null);
+        const showDeleteConfirmModal = ref(false);
+        const memberToDelete = ref(null);
         const formData = ref({
           name: '',
           phone: '',
@@ -1170,11 +1256,22 @@
         };
 
         const handleDeleteMember = (member) => {
-          const confirmed = confirm(`确定删除下属？\n删除后，${member.distributorName} 的邀请码将失效，但已有的邀请记录将保留`);
-          if (confirmed) {
+          memberToDelete.value = member;
+          showDeleteConfirmModal.value = true;
+        };
+
+        const confirmDelete = () => {
+          if (memberToDelete.value) {
             alert('删除成功');
+            showDeleteConfirmModal.value = false;
+            memberToDelete.value = null;
             loadTeamMembers();
           }
+        };
+
+        const cancelDelete = () => {
+          showDeleteConfirmModal.value = false;
+          memberToDelete.value = null;
         };
 
         const validateForm = () => {
@@ -1265,11 +1362,15 @@
           generatedInviteCode,
           showInvitePosterModal,
           selectedMember,
+          showDeleteConfirmModal,
+          memberToDelete,
           goBack,
           goToInviteRecord,
           handleViewDetail,
           handleViewInviteCode,
           handleDeleteMember,
+          confirmDelete,
+          cancelDelete,
           handleAddMember,
           handleCloseModal,
           handleSubmitForm,
@@ -1479,7 +1580,6 @@
 
               <div class="invite-code-actions">
                 <button class="invite-code-btn secondary" @click="handleCloseInviteCodeModal">关闭</button>
-                <button class="invite-code-btn primary" @click="handleCopyInviteCode">复制邀请码</button>
               </div>
             </div>
           </div>
@@ -1523,8 +1623,22 @@
               </div>
 
               <div class="poster-actions">
-                <button class="poster-btn" @click="handleCopyMemberCode">📋 复制邀请码</button>
                 <button class="poster-btn secondary" @click="handleDownloadPoster">⬇️ 保存海报</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 删除确认弹窗 -->
+          <div v-if="showDeleteConfirmModal && memberToDelete" class="delete-confirm-modal" @click="cancelDelete">
+            <div class="delete-confirm-content" @click.stop>
+              <div class="delete-confirm-icon">⚠️</div>
+              <h2 class="delete-confirm-title">确定删除？</h2>
+              <p class="delete-confirm-message">
+                删除后，{{ memberToDelete.distributorName }} 的邀请码将失效，但已有的邀请记录将保留。
+              </p>
+              <div class="delete-confirm-actions">
+                <button class="delete-confirm-btn cancel" @click="cancelDelete">取消</button>
+                <button class="delete-confirm-btn delete" @click="confirmDelete">删除</button>
               </div>
             </div>
           </div>
