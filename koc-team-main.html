@@ -910,6 +910,10 @@
           return teamMembers.value.filter(item => item.status === filterStatus.value);
         });
 
+        const goBack = () => {
+          window.history.back();
+        };
+
         const goToInviteRecord = () => {
           window.location.href = './koc-team-index.html';
         };
@@ -1016,6 +1020,7 @@
           formErrors,
           showInviteCodeModal,
           generatedInviteCode,
+          goBack,
           goToInviteRecord,
           handleViewDetail,
           handleViewInviteCode,
@@ -1047,10 +1052,10 @@
           <!-- 页面标题栏 -->
           <div class="title-bar">
             <div class="title-bar-left">
-              <button class="title-bar-btn">‹</button>
+              <button class="title-bar-btn" @click="goBack">‹</button>
               <div class="title-bar-text">团队管理</div>
             </div>
-            <button class="title-bar-link" @click="goToInviteRecord">邀请记录 ></button>
+            <button class="title-bar-link" @click="handleAddMember">➕ 添加下属</button>
           </div>
 
           <div class="page-wrapper">
@@ -1095,7 +1100,7 @@
                   :class="{ active: currentTab === 'board' }"
                   @click="currentTab = 'board'"
                 >
-                  管理看板
+                  营期看板
                 </button>
               </div>
 
