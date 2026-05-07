@@ -16,8 +16,6 @@
       width: 100%;
       height: 100%;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-      background: #f5f5f5;
-      color: #333;
     }
 
     #app {
@@ -25,23 +23,20 @@
       height: 100%;
       display: flex;
       flex-direction: column;
+      background: linear-gradient(180deg, #d4f4f1 0%, #e8faf8 100%);
     }
 
     /* 顶部导航栏 */
     .top-navbar {
       background: #fff;
-      border-bottom: 1px solid #eee;
       padding: 8px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      font-size: 12px;
-      color: #999;
-      z-index: 100;
     }
 
     .nav-left, .nav-right {
-      width: 40px;
+      width: 30px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -50,15 +45,18 @@
     .nav-center {
       flex: 1;
       text-align: center;
-      font-size: 14px;
-      color: #333;
-      font-weight: 500;
     }
 
-    .nav-center-url {
+    .nav-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .nav-url {
       font-size: 11px;
       color: #999;
-      display: block;
+      margin-top: 2px;
     }
 
     .nav-btn {
@@ -68,6 +66,11 @@
       color: #333;
       cursor: pointer;
       padding: 0;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     /* 页面标题栏 */
@@ -77,18 +80,17 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      border-bottom: 1px solid #eee;
     }
 
     .title-bar-btn {
       background: none;
       border: none;
-      font-size: 18px;
+      font-size: 20px;
       color: #333;
       cursor: pointer;
-      padding: 4px;
-      width: 32px;
-      height: 32px;
+      padding: 0;
+      width: 30px;
+      height: 30px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -98,7 +100,6 @@
       font-size: 16px;
       font-weight: 600;
       color: #333;
-      flex: 1;
     }
 
     /* 页面内容 */
@@ -109,27 +110,28 @@
       flex-direction: column;
     }
 
-    /* 浅绿色统计区域 */
+    /* 统计区域 */
     .stats-section {
-      background: linear-gradient(180deg, #d4f4f1 0%, #e8faf8 100%);
+      background: #fff;
       padding: 20px 16px;
-    }
-
-    .stats-header {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin-bottom: 20px;
+      display: flex;
+      gap: 0;
     }
 
     .stat-col {
+      flex: 1;
       text-align: center;
+      padding: 0 12px;
+    }
+
+    .stat-col:first-child {
+      border-right: 1px solid #eee;
     }
 
     .stat-label {
       font-size: 12px;
       color: #999;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -145,25 +147,29 @@
     .info-icon {
       width: 14px;
       height: 14px;
-      border: 1px solid #999;
+      border: 1px solid #ccc;
       border-radius: 50%;
       font-size: 10px;
       line-height: 12px;
       text-align: center;
       color: #999;
+      cursor: pointer;
     }
 
-    .action-buttons {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+    /* 按钮区域 */
+    .action-section {
+      background: rgba(212, 244, 241, 0.5);
+      padding: 12px 16px;
+      display: flex;
       gap: 12px;
     }
 
     .action-btn {
+      flex: 1;
       background: #fff;
       border: none;
       border-radius: 6px;
-      padding: 12px;
+      padding: 12px 16px;
       font-size: 13px;
       color: #5dd4cc;
       cursor: pointer;
@@ -173,7 +179,7 @@
       justify-content: center;
       gap: 6px;
       transition: all 0.3s ease;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     }
 
     .action-btn:active {
@@ -181,30 +187,42 @@
     }
 
     .action-icon {
-      font-size: 16px;
+      font-size: 14px;
     }
 
-    /* Tab 页签 */
-    .tabs-wrapper {
+    .action-info-icon {
+      width: 12px;
+      height: 12px;
+      border: 1px solid #5dd4cc;
+      border-radius: 50%;
+      font-size: 9px;
+      line-height: 10px;
+      text-align: center;
+      color: #5dd4cc;
+      margin-left: 2px;
+    }
+
+    /* Tab 和筛选区域 */
+    .tabs-filter-wrapper {
       background: #fff;
-      border-bottom: 1px solid #eee;
-      padding: 0 16px;
     }
 
-    .tabs {
+    .tabs-section {
+      padding: 0 16px;
+      border-bottom: 1px solid #eee;
       display: flex;
-      gap: 0;
     }
 
     .tab {
       background: none;
       border: none;
-      padding: 14px 12px;
+      padding: 14px 16px;
       cursor: pointer;
       color: #999;
       font-size: 14px;
       position: relative;
       transition: color 0.3s ease;
+      font-weight: 500;
     }
 
     .tab.active {
@@ -222,15 +240,11 @@
       background: #5dd4cc;
     }
 
-    /* 筛选过滤按钮 */
     .filters-section {
-      background: #fff;
       padding: 12px 16px;
-      border-bottom: 1px solid #eee;
       display: flex;
       gap: 8px;
       overflow-x: auto;
-      flex-wrap: wrap;
     }
 
     .filter-btn {
@@ -243,6 +257,7 @@
       cursor: pointer;
       white-space: nowrap;
       transition: all 0.3s ease;
+      flex-shrink: 0;
     }
 
     .filter-btn.active {
@@ -261,12 +276,13 @@
       padding: 0;
       display: flex;
       flex-direction: column;
+      overflow: hidden;
     }
 
     .list-container {
       flex: 1;
-      padding: 16px;
       overflow-y: auto;
+      padding: 16px;
     }
 
     /* 空状态 */
@@ -281,9 +297,13 @@
     }
 
     .empty-icon {
-      font-size: 80px;
-      margin-bottom: 12px;
-      opacity: 0.6;
+      width: 120px;
+      height: 120px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.7;
     }
 
     .empty-text {
@@ -292,53 +312,20 @@
       font-weight: 500;
     }
 
-    /* 邀请用户卡片 */
-    .invitation-item {
-      background: #fff;
-      border-radius: 8px;
-      padding: 12px;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    }
-
-    .user-avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      object-fit: cover;
-      background: linear-gradient(135deg, #5dd4cc 0%, #4cc4bb 100%);
+    /* 邮箱插图 */
+    .mailbox-illustration {
+      width: 100%;
+      height: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #fff;
-      font-size: 18px;
-      flex-shrink: 0;
     }
 
-    .user-info {
-      flex: 1;
-    }
-
-    .user-name {
-      font-size: 14px;
-      font-weight: 500;
-      color: #333;
-      margin-bottom: 2px;
-    }
-
-    .user-status {
-      font-size: 12px;
-      color: #5dd4cc;
-      margin-bottom: 2px;
-      font-weight: 500;
-    }
-
-    .user-time {
-      font-size: 12px;
-      color: #999;
+    svg {
+      width: 100%;
+      height: 100%;
+      max-width: 120px;
+      max-height: 120px;
     }
 
     /* 加载态 */
@@ -370,13 +357,61 @@
       font-size: 14px;
       color: #999;
     }
+
+    /* 用户列表项 */
+    .invitation-item {
+      background: #fff;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #5dd4cc 0%, #4cc4bb 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .user-info {
+      flex: 1;
+    }
+
+    .user-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+      margin-bottom: 2px;
+    }
+
+    .user-status {
+      font-size: 12px;
+      color: #5dd4cc;
+      margin-bottom: 2px;
+      font-weight: 500;
+    }
+
+    .user-time {
+      font-size: 12px;
+      color: #999;
+    }
   </style>
 </head>
 <body>
   <div id="app"></div>
 
   <script>
-    const { createApp, ref, computed } = Vue;
+    const { createApp, ref, computed, onMounted } = Vue;
 
     const app = createApp({
       setup() {
@@ -398,57 +433,16 @@
           { label: '未入营', value: 'room_not_enter' },
         ];
 
-        const statusMap = {
-          'xq_paid': '推荐成功',
-          'xq_tried': '已领卡',
-          'room_entered': '已入营',
-          'room_not_enter': '未入营',
-        };
-
         const loadInvitations = () => {
           loading.value = true;
-          try {
+          setTimeout(() => {
             invitationStats.value = {
-              totalInvite: 28,
-              totalConvert: 10,
+              totalInvite: 0,
+              totalConvert: 0,
             };
-
-            invitationList.value = [
-              {
-                id: 1,
-                wxName: '李四',
-                status: 'xq_paid',
-                statusDesc: '推荐成功',
-                addTime: '2026-05-01 14:30:00',
-              },
-              {
-                id: 2,
-                wxName: '王五',
-                status: 'xq_tried',
-                statusDesc: '已领卡',
-                addTime: '2026-05-02 10:15:00',
-              },
-              {
-                id: 3,
-                wxName: '赵六',
-                status: 'room_entered',
-                statusDesc: '已入营',
-                addTime: '2026-05-03 09:45:00',
-              },
-              {
-                id: 4,
-                wxName: '孙七',
-                status: 'room_not_enter',
-                statusDesc: '未入营',
-                addTime: '2026-05-04 15:20:00',
-              },
-            ];
-          } catch (error) {
-            console.error('Failed to load invitations:', error);
-            alert('加载失败，请重试');
-          } finally {
+            invitationList.value = [];
             loading.value = false;
-          }
+          }, 500);
         };
 
         const filteredInvitations = computed(() => {
@@ -458,6 +452,10 @@
           return invitationList.value.filter(item => item.status === filterStatus.value);
         });
 
+        onMounted(() => {
+          loadInvitations();
+        });
+
         return {
           currentTab,
           filterStatus,
@@ -465,7 +463,6 @@
           loading,
           invitationStats,
           filterItems,
-          loadInvitations,
         };
       },
       template: `
@@ -476,8 +473,8 @@
               <button class="nav-btn">×</button>
             </div>
             <div class="nav-center">
-              生财官网·会员体验卡
-              <span class="nav-center-url">scys.com</span>
+              <div class="nav-title">生财官网·会员体验卡</div>
+              <div class="nav-url">scys.com</div>
             </div>
             <div class="nav-right">
               <button class="nav-btn">⋯</button>
@@ -486,45 +483,45 @@
 
           <!-- 页面标题栏 -->
           <div class="title-bar">
-            <button class="title-bar-btn" @click="$router?.back?.()">‹</button>
-            <div class="title-bar-text">邀请记录</div>
+            <button class="title-bar-btn">‹</button>
+            <div class="title-bar-text">体验营邀请记录</div>
           </div>
 
           <div class="page-wrapper">
             <!-- 统计区域 -->
             <div class="stats-section">
-              <div class="stats-header">
-                <div class="stat-col">
-                  <div class="stat-label">
-                    邀请总人数
-                    <span class="info-icon">ⓘ</span>
-                  </div>
-                  <div class="stat-value">{{ invitationStats.totalInvite }}</div>
+              <div class="stat-col">
+                <div class="stat-label">
+                  已邀请总人数
+                  <span class="info-icon">ⓘ</span>
                 </div>
-                <div class="stat-col">
-                  <div class="stat-label">
-                    成功推荐总人数
-                    <span class="info-icon">ⓘ</span>
-                  </div>
-                  <div class="stat-value">{{ invitationStats.totalConvert }}</div>
-                </div>
+                <div class="stat-value">{{ invitationStats.totalInvite }}</div>
               </div>
-
-              <div class="action-buttons">
-                <button class="action-btn">
-                  <span class="action-icon">🔗</span>
-                  <span>生成邀请码</span>
-                </button>
-                <button class="action-btn">
-                  <span class="action-icon">📊</span>
-                  <span>切换历史数据</span>
-                </button>
+              <div class="stat-col">
+                <div class="stat-label">
+                  成功推荐总人数
+                  <span class="info-icon">ⓘ</span>
+                </div>
+                <div class="stat-value">{{ invitationStats.totalConvert }}</div>
               </div>
             </div>
 
-            <!-- Tab 页签 -->
-            <div class="tabs-wrapper">
-              <div class="tabs">
+            <!-- 按钮区域 -->
+            <div class="action-section">
+              <button class="action-btn">
+                <span class="action-icon">🔗</span>
+                <span>生成邀请码</span>
+                <span class="action-info-icon">ⓘ</span>
+              </button>
+              <button class="action-btn">
+                <span class="action-icon">📊</span>
+                <span>切换历史数据</span>
+              </button>
+            </div>
+
+            <!-- Tab 和筛选区域 -->
+            <div class="tabs-filter-wrapper">
+              <div class="tabs-section">
                 <button
                   class="tab"
                   :class="{ active: currentTab === 'progress' }"
@@ -540,19 +537,18 @@
                   营期看板
                 </button>
               </div>
-            </div>
 
-            <!-- 筛选按钮 -->
-            <div class="filters-section">
-              <button
-                v-for="item in filterItems"
-                :key="item.value"
-                class="filter-btn"
-                :class="{ active: filterStatus === item.value }"
-                @click="filterStatus = item.value"
-              >
-                {{ item.label }}
-              </button>
+              <div class="filters-section">
+                <button
+                  v-for="item in filterItems"
+                  :key="item.value"
+                  class="filter-btn"
+                  :class="{ active: filterStatus === item.value }"
+                  @click="filterStatus = item.value"
+                >
+                  {{ item.label }}
+                </button>
+              </div>
             </div>
 
             <!-- 内容区域 -->
@@ -561,7 +557,23 @@
                 <!-- 邀请进度 -->
                 <div v-if="currentTab === 'progress'">
                   <div v-if="invitationList.length === 0 && !loading" class="empty-state">
-                    <div class="empty-icon">📭</div>
+                    <div class="empty-icon">
+                      <div class="mailbox-illustration">
+                        <svg viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg">
+                          <!-- 邮箱主体 -->
+                          <rect x="40" y="60" width="120" height="70" rx="8" fill="#a8ddd8" opacity="0.6"/>
+                          <!-- 邮箱盖 -->
+                          <path d="M 40 60 L 100 30 L 160 60" fill="#7eccc4" opacity="0.8"/>
+                          <!-- 邮箱旗子 -->
+                          <rect x="155" y="75" width="20" height="12" rx="2" fill="#7eccc4" opacity="0.7"/>
+                          <line x1="175" y1="81" x2="190" y2="70" stroke="#5dd4cc" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+                          <!-- 装饰线 -->
+                          <circle cx="120" cy="50" r="3" fill="#5dd4cc" opacity="0.4"/>
+                          <circle cx="130" cy="45" r="2" fill="#5dd4cc" opacity="0.5"/>
+                          <circle cx="140" cy="50" r="2" fill="#5dd4cc" opacity="0.4"/>
+                        </svg>
+                      </div>
+                    </div>
                     <div class="empty-text">暂无数据</div>
                   </div>
 
@@ -591,10 +603,7 @@
             </div>
           </div>
         </div>
-      `,
-      mounted() {
-        this.loadInvitations();
-      }
+      `
     });
 
     app.mount('#app');
