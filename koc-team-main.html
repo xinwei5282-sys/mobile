@@ -134,7 +134,8 @@
     .stats-section {
       background: #fff;
       padding: 20px 16px;
-      display: flex;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
       gap: 0;
     }
 
@@ -142,10 +143,11 @@
       flex: 1;
       text-align: center;
       padding: 0 12px;
+      border-right: 1px solid #eee;
     }
 
-    .stat-col:first-child {
-      border-right: 1px solid #eee;
+    .stat-col:last-child {
+      border-right: none;
     }
 
     .stat-label {
@@ -858,6 +860,7 @@
         const teamStats = ref({
           totalMembers: 0,
           totalInviteCount: 0,
+          totalConvert: 0,
         });
 
         const filterItems = [];
@@ -868,6 +871,7 @@
             teamStats.value = {
               totalMembers: 2,
               totalInviteCount: 63,
+              totalConvert: 25,
             };
 
             teamMembers.value = [
@@ -1075,16 +1079,14 @@
                 </div>
                 <div class="stat-value">{{ teamStats.totalInviteCount }}</div>
               </div>
+              <div class="stat-col">
+                <div class="stat-label">
+                  成功推荐总人数
+                  <span class="info-icon">ⓘ</span>
+                </div>
+                <div class="stat-value">{{ teamStats.totalConvert }}</div>
+              </div>
             </div>
-
-            <!-- 按钮区域 -->
-            <div class="action-section">
-              <button class="action-btn" @click="handleAddMember">
-                <span class="action-icon">➕</span>
-                <span>添加下属</span>
-              </button>
-            </div>
-
             <!-- Tab 和筛选区域 -->
             <div class="tabs-filter-wrapper">
               <div class="tabs-section">
