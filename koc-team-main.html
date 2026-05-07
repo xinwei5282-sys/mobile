@@ -1365,12 +1365,7 @@
         const validateForm = () => {
           formErrors.value = {};
           if (!formData.value.name.trim()) {
-            formErrors.value.name = '请输入下属名称';
-          }
-          if (!formData.value.phone.trim()) {
-            formErrors.value.phone = '请输入手机号';
-          } else if (!/^1[3-9]\d{9}$/.test(formData.value.phone)) {
-            formErrors.value.phone = '请输入有效的手机号';
+            formErrors.value.name = '请输入成员名称';
           }
           if (!formData.value.tag.trim()) {
             formErrors.value.tag = '请选择或输入标签';
