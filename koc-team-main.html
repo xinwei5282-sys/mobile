@@ -358,6 +358,79 @@
       color: #999;
     }
 
+    /* 进度卡片 */
+    .progress-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .progress-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 4px;
+    }
+
+    .progress-meta {
+      font-size: 12px;
+      color: #999;
+    }
+
+    .progress-menu {
+      background: none;
+      border: none;
+      color: #5dd4cc;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .progress-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .progress-stat {
+      text-align: center;
+      padding: 12px;
+      background: #f9f9f9;
+      border-radius: 8px;
+    }
+
+    .progress-stat-num {
+      font-size: 20px;
+      font-weight: 700;
+      color: #5dd4cc;
+      margin-bottom: 4px;
+    }
+
+    .progress-stat-label {
+      font-size: 11px;
+      color: #999;
+      line-height: 1.4;
+    }
+
+    .progress-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
     /* 成员卡片 */
     .member-card {
       background: #fff;
@@ -805,9 +878,9 @@
                 joinTime: '2026-05-01 10:30:00',
                 status: 'success',
                 inviteCount: 28,
-                convertCount: 10,
                 tryCount: 20,
                 chatCount: 8,
+                notEnterCount: 20,
               },
               {
                 distributorId: 2,
@@ -818,9 +891,9 @@
                 joinTime: '2026-05-02 14:20:00',
                 status: 'success',
                 inviteCount: 35,
-                convertCount: 15,
                 tryCount: 25,
                 chatCount: 12,
+                notEnterCount: 23,
               },
             ];
 
@@ -895,9 +968,9 @@
             joinTime: new Date().toLocaleString('zh-CN'),
             status: 'success',
             inviteCount: 0,
-            convertCount: 0,
             tryCount: 0,
             chatCount: 0,
+            notEnterCount: 0,
           };
 
           teamMembers.value = [...teamMembers.value, newMember];
@@ -999,11 +1072,6 @@
 
             <!-- 按钮区域 -->
             <div class="action-section">
-              <button class="action-btn" @click="handleGenerateInviteCode">
-                <span class="action-icon">🔗</span>
-                <span>生成邀请码</span>
-                <span class="action-info-icon">ⓘ</span>
-              </button>
               <button class="action-btn" @click="handleAddMember">
                 <span class="action-icon">➕</span>
                 <span>添加下属</span>
@@ -1053,43 +1121,36 @@
                   </div>
 
                   <div v-else>
-                    <div v-for="member in teamMembers" :key="member.distributorId" class="member-card">
-                      <div class="member-header">
-                        <div class="member-info">
-                          <div class="member-name">{{ member.distributorName }}</div>
-                          <div class="member-tag">{{ member.tag }}</div>
-                          <div class="member-phone">{{ member.distributorPhone }}</div>
+                    <div v-for="member in teamMembers" :key="member.distributorId" class="progress-card">
+                      <div class="progress-header">
+                        <div>
+                          <div class="progress-name">{{ member.distributorName }}</div>
+                          <div class="progress-meta">{{ member.tag }} • {{ member.distributorPhone }}</div>
                         </div>
-                        <div class="member-stats">
-                          <div class="stat">
-                            <div class="stat-num">{{ member.inviteCount }}</div>
-                            <div class="stat-name">邀请</div>
-                          </div>
-                          <div class="stat">
-                            <div class="stat-num">{{ member.convertCount }}</div>
-                            <div class="stat-name">转化</div>
-                          </div>
+                        <button class="progress-menu" @click="handleViewDetail(member)">查看详情 →</button>
+                      </div>
+
+                      <div class="progress-stats">
+                        <div class="progress-stat">
+                          <div class="progress-stat-num">{{ member.inviteCount }}</div>
+                          <div class="progress-stat-label">邀请总人数</div>
+                        </div>
+                        <div class="progress-stat">
+                          <div class="progress-stat-num">{{ member.tryCount }}</div>
+                          <div class="progress-stat-label">已领卡</div>
+                        </div>
+                        <div class="progress-stat">
+                          <div class="progress-stat-num">{{ member.chatCount }}</div>
+                          <div class="progress-stat-label">已入营</div>
+                        </div>
+                        <div class="progress-stat">
+                          <div class="progress-stat-num">{{ member.notEnterCount }}</div>
+                          <div class="progress-stat-label">未入营</div>
                         </div>
                       </div>
 
-                      <div class="member-details">
-                        <div class="detail-item">
-                          <span class="detail-label">已领卡：</span>
-                          <span class="detail-value">{{ member.tryCount }}</span>
-                        </div>
-                        <div class="detail-item">
-                          <span class="detail-label">已入营：</span>
-                          <span class="detail-value">{{ member.chatCount }}</span>
-                        </div>
-                        <div class="detail-item">
-                          <span class="detail-label">加入时间：</span>
-                          <span class="detail-value">{{ member.joinTime }}</span>
-                        </div>
-                      </div>
-
-                      <div class="member-actions">
+                      <div class="progress-actions">
                         <button class="action-btn-sm primary" @click="handleViewInviteCode(member)">查看邀请码</button>
-                        <button class="action-btn-sm primary" @click="handleViewDetail(member)">查看详情</button>
                         <button class="action-btn-sm danger" @click="handleDeleteMember(member)">删除</button>
                       </div>
                     </div>
