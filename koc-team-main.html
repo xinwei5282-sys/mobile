@@ -199,7 +199,7 @@
       justify-content: center;
       gap: 6px;
       transition: all 0.3s ease;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
     }
 
     .action-btn:active {
@@ -270,7 +270,7 @@
     .filter-btn {
       background: #f5f5f5;
       border: none;
-      border-radius: 4px;
+      border-radius: 6px;
       padding: 6px 12px;
       font-size: 12px;
       color: #666;
@@ -283,6 +283,7 @@
     .filter-btn.active {
       background: #5dd4cc;
       color: #fff;
+      transform: scale(1.02);
     }
 
     .filter-btn:active {
@@ -312,7 +313,7 @@
       align-items: center;
       justify-content: center;
       height: 100%;
-      padding: 40px 20px;
+      padding: 60px 20px;
       text-align: center;
     }
 
@@ -365,6 +366,12 @@
       padding: 16px;
       margin-bottom: 12px;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+      transition: all 0.3s ease;
+    }
+
+    .progress-card:active {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
 
     .progress-header {
@@ -400,7 +407,7 @@
 
     .progress-stats {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr 1fr;
+      grid-template-columns: 1fr 1fr;
       gap: 12px;
       margin-bottom: 16px;
     }
@@ -413,7 +420,7 @@
     }
 
     .progress-stat-num {
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 700;
       color: #5dd4cc;
       margin-bottom: 4px;
@@ -437,7 +444,7 @@
       border-radius: 8px;
       padding: 12px;
       margin-bottom: 12px;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
     }
 
     .member-header {
