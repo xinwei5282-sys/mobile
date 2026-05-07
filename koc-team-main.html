@@ -385,18 +385,17 @@
       border-bottom: 1px solid #f0f0f0;
     }
 
+    .progress-name-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
     .progress-name {
       font-size: 16px;
       font-weight: 600;
       color: #333;
-      margin-bottom: 4px;
-    }
-
-    .progress-meta {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
     }
 
     .progress-tag {
@@ -425,20 +424,20 @@
 
     .progress-stats {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 4px;
       margin-bottom: 16px;
     }
 
     .progress-stat {
       text-align: center;
-      padding: 12px;
+      padding: 10px 4px;
       background: #f9f9f9;
       border-radius: 8px;
     }
 
     .progress-stat-num {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 700;
       color: #5dd4cc;
       margin-bottom: 4px;
@@ -448,11 +447,12 @@
       font-size: 11px;
       color: #999;
       line-height: 1.4;
+      white-space: nowrap;
     }
 
     .progress-actions {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr 1fr 1fr;
       gap: 8px;
     }
 
@@ -1588,13 +1588,12 @@
                     <div v-for="member in teamMembers" :key="member.distributorId" class="progress-card">
                       <div class="progress-header">
                         <div>
-                          <div class="progress-name">{{ member.distributorName }}</div>
-                          <div class="progress-meta">
+                          <div class="progress-name-row">
+                            <span class="progress-name">{{ member.distributorName }}</span>
                             <span class="progress-tag">{{ member.tag }}</span>
-                            <span class="progress-phone">{{ member.distributorPhone }}</span>
                           </div>
+                          <div class="progress-phone">{{ member.distributorPhone }}</div>
                         </div>
-                        <button class="progress-menu" @click="handleViewDetail(member)">查看详情 →</button>
                       </div>
 
                       <div class="progress-stats">
@@ -1617,6 +1616,7 @@
                       </div>
 
                       <div class="progress-actions">
+                        <button class="action-btn-sm" @click="handleViewDetail(member)">查看详情</button>
                         <button class="action-btn-sm primary" @click="handleViewInviteCode(member)">查看邀请码</button>
                         <button class="action-btn-sm danger" @click="handleDeleteMember(member)">删除</button>
                       </div>
