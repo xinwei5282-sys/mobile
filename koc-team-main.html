@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>团队管理 - KOC 推广团队</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+      background: #f5f5f5;
+    }
+
+    #app {
+      width: 100%;
+      min-height: 100vh;
+    }
+
+    .app {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      min-height: 100vh;
+    }
+
+    /* 顶部导航栏 */
+    .top-bar {
+      position: sticky;
+      top: 0;
+      background: #fff;
+      border-bottom: 1px solid #eee;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 10;
+      font-size: 12px;
+      color: #999;
+    }
+
+    .top-bar-left, .top-bar-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .top-bar button {
+      background: none;
+      border: none;
+      color: #333;
+      font-size: 16px;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .top-bar-title {
+      text-align: center;
+      flex: 1;
+      font-size: 14px;
+      color: #333;
+      font-weight: 500;
+    }
+
+    /* 页面内容 */
+    .page-content {
+      flex: 1;
+      overflow-y: auto;
+      padding-bottom: 20px;
+    }
+
+    /* 顶部绿色区域 */
+    .header-section {
+      background: linear-gradient(180deg, #5dd4cc 0%, #4cc4bb 100%);
+      padding: 24px 16px;
+      color: #fff;
+    }
+
+    .header-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .header-title-icon {
+      font-size: 20px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .stat-item {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      opacity: 0.9;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    .info-icon {
+      font-size: 12px;
+      opacity: 0.7;
+    }
+
+    /* 操作按钮区域 */
+    .action-bar {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 12px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .action-btn {
+      background: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-size: 13px;
+      color: #5dd4cc;
+      cursor: pointer;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.3s ease;
+    }
+
+    .action-btn:active {
+      background: #f0f0f0;
+    }
+
+    /* Tab 页签 */
+    .tabs-section {
+      background: #fff;
+      padding: 0 16px;
+      border-bottom: 1px solid #eee;
+      margin-top: 12px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+    }
+
+    .tab {
+      background: none;
+      border: none;
+      padding: 12px 0;
+      cursor: pointer;
+      color: #999;
+      font-size: 14px;
+      white-space: nowrap;
+      position: relative;
+      transition: color 0.3s ease;
+    }
+
+    .tab.active {
+      color: #333;
+      font-weight: 500;
+    }
+
+    .tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: #5dd4cc;
+    }
+
+    /* 筛选按钮 */
+    .filter-bar {
+      background: #fff;
+      padding: 12px 16px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+    }
+
+    .filter-btn {
+      background: #f5f5f5;
+      border: 1px solid #eee;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 12px;
+      color: #666;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.3s ease;
+    }
+
+    .filter-btn.active {
+      background: #5dd4cc;
+      color: #fff;
+      border-color: #5dd4cc;
+    }
+
+    .filter-btn:active {
+      background: #4cc4bb;
+    }
+
+    /* 列表内容 */
+    .list-content {
+      padding: 0 16px 16px;
+    }
+
+    .team-member-card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .member-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .member-info {
+      flex: 1;
+    }
+
+    .member-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 4px;
+    }
+
+    .member-tag {
+      display: inline-block;
+      background: #e8f5f4;
+      color: #5dd4cc;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-bottom: 4px;
+    }
+
+    .member-phone {
+      font-size: 12px;
+      color: #999;
+    }
+
+    .member-stats {
+      display: flex;
+      gap: 16px;
+      text-align: center;
+    }
+
+    .stat {
+      min-width: 40px;
+    }
+
+    .stat-num {
+      font-size: 16px;
+      font-weight: 600;
+      color: #5dd4cc;
+    }
+
+    .stat-name {
+      font-size: 11px;
+      color: #999;
+      margin-top: 2px;
+    }
+
+    .member-details {
+      background: #f9f9f9;
+      border-radius: 6px;
+      padding: 8px 12px;
+      margin-bottom: 12px;
+      font-size: 12px;
+    }
+
+    .detail-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+      color: #666;
+    }
+
+    .detail-label {
+      color: #999;
+    }
+
+    .detail-value {
+      color: #333;
+      font-weight: 500;
+    }
+
+    .member-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+
+    .action-btn-sm {
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid #eee;
+      background: #fff;
+      font-size: 12px;
+      color: #666;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .action-btn-sm:active {
+      background: #f5f5f5;
+    }
+
+    .action-btn-sm.primary {
+      color: #5dd4cc;
+      border-color: #5dd4cc;
+    }
+
+    .action-btn-sm.primary:active {
+      background: #e8f5f4;
+    }
+
+    .action-btn-sm.danger {
+      color: #ff6b6b;
+      border-color: #ffcccc;
+    }
+
+    .action-btn-sm.danger:active {
+      background: #fff0f0;
+    }
+
+    /* 空状态 */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px;
+      text-align: center;
+    }
+
+    .empty-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+      opacity: 0.6;
+    }
+
+    .empty-text {
+      font-size: 14px;
+      color: #999;
+    }
+
+    /* 加载态 */
+    .loading-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #f0f0f0;
+      border-top-color: #5dd4cc;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 12px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .loading-state p {
+      font-size: 14px;
+      color: #999;
+    }
+
+    /* 模态框 */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: flex-end;
+      z-index: 1000;
+      animation: slideInOverlay 0.3s ease-out;
+    }
+
+    @keyframes slideInOverlay {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .modal-content {
+      width: 100%;
+      background: #fff;
+      border-radius: 16px 16px 0 0;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: slideUp 0.3s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(100%);
+      }
+      to {
+        transform: translateY(0);
+      }
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 16px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .modal-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 20px;
+      color: #999;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .modal-body {
+      padding: 20px 16px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 14px;
+      color: #333;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .required {
+      color: #ff6b6b;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #333;
+      box-sizing: border-box;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #5dd4cc;
+      background: #f9fefb;
+    }
+
+    .form-input::placeholder {
+      color: #999;
+    }
+
+    .form-tip {
+      font-size: 12px;
+      color: #999;
+      margin-top: 4px;
+    }
+
+    .modal-footer {
+      display: flex;
+      gap: 12px;
+      padding: 20px 16px;
+      border-top: 1px solid #eee;
+    }
+
+    .btn-cancel {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid #ddd;
+      background: #fff;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #666;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-cancel:active {
+      background: #f5f5f5;
+    }
+
+    .btn-submit {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      background: #5dd4cc;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-submit:not(:disabled):active {
+      background: #4cc4bb;
+    }
+
+    .code-display {
+      padding-bottom: 0 !important;
+    }
+
+    .invite-code-box {
+      text-align: center;
+      padding: 24px;
+      background: #f9fefb;
+      border: 2px solid #5dd4cc;
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+
+    .code-label {
+      font-size: 12px;
+      color: #999;
+      margin-bottom: 8px;
+    }
+
+    .code-value {
+      font-size: 24px;
+      font-weight: 600;
+      color: #5dd4cc;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+      font-family: 'Monaco', 'Courier New', monospace;
+    }
+
+    .code-tip {
+      font-size: 12px;
+      color: #999;
+    }
+
+    .code-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .code-action-btn {
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      background: #fff;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      color: #666;
+      transition: all 0.3s ease;
+    }
+
+    .code-action-btn:active {
+      background: #f5f5f5;
+      border-color: #5dd4cc;
+      color: #5dd4cc;
+    }
+
+    .code-action-icon {
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+
+  <script>
+    const { createApp, ref, computed, onMounted } = Vue;
+
+    const app = createApp({
+      setup() {
+        const currentTab = ref('progress');
+        const filterStatus = ref('');
+        const showAddModal = ref(false);
+        const teamMembers = ref([]);
+        const loading = ref(false);
+
+        const formData = ref({
+          distributorName: '',
+          distributorPhone: '',
+          tag: '',
+        });
+
+        const generatedCode = ref('');
+        const inviteCodeExpireTime = ref('');
+        const showCodeResult = ref(false);
+        const modalLoading = ref(false);
+
+        const teamStats = ref({
+          totalMembers: 0,
+          totalInviteCount: 0,
+          totalConvertCount: 0,
+        });
+
+        const filterItems = [
+          { label: '全部', value: '' },
+          { label: '推荐成功', value: 'xq_paid' },
+          { label: '已领卡', value: 'xq_tried' },
+          { label: '已入营', value: 'room_entered' },
+          { label: '未入营', value: 'room_not_enter' },
+        ];
+
+        const isFormValid = computed(() => {
+          return (
+            formData.value.distributorName.trim().length > 0 &&
+            formData.value.distributorPhone.trim().length > 0 &&
+            formData.value.tag.trim().length > 0
+          );
+        });
+
+        const isPhoneValid = (phone) => {
+          const phoneRegex = /^1[3-9]\d{9}$/;
+          return phoneRegex.test(phone);
+        };
+
+        const loadTeamMembers = async (isForce = false) => {
+          if (loading.value) return;
+
+          loading.value = true;
+          try {
+            if (isForce) {
+              teamMembers.value = [
+                {
+                  distributorId: 1,
+                  distributorName: '张三',
+                  distributorPhone: '13812345678',
+                  inviteCode: 'KOC_M_001234',
+                  tag: '微信群1',
+                  joinTime: '2026-05-01 10:30:00',
+                  inviteCount: 28,
+                  convertCount: 10,
+                  tryCount: 20,
+                  chatCount: 8,
+                },
+                {
+                  distributorId: 2,
+                  distributorName: '李四',
+                  distributorPhone: '13912345679',
+                  inviteCode: 'KOC_M_001235',
+                  tag: '朋友圈',
+                  joinTime: '2026-05-02 14:20:00',
+                  inviteCount: 35,
+                  convertCount: 15,
+                  tryCount: 25,
+                  chatCount: 12,
+                },
+              ];
+              teamStats.value = {
+                totalMembers: 2,
+                totalInviteCount: 63,
+                totalConvertCount: 25,
+              };
+            }
+          } catch (error) {
+            console.error('Failed to load team members:', error);
+            alert('加载失败，请重试');
+          } finally {
+            loading.value = false;
+          }
+        };
+
+        const handleGenerateCode = async () => {
+          if (!formData.value.distributorName.trim()) {
+            alert('请输入下属名字');
+            return;
+          }
+
+          if (!formData.value.distributorPhone.trim()) {
+            alert('请输入下属电话');
+            return;
+          }
+
+          if (!isPhoneValid(formData.value.distributorPhone)) {
+            alert('请输入有效的电话号码');
+            return;
+          }
+
+          if (!formData.value.tag.trim()) {
+            alert('请输入标签');
+            return;
+          }
+
+          if (formData.value.tag.length > 50) {
+            alert('标签长度不能超过50个字符');
+            return;
+          }
+
+          modalLoading.value = true;
+          try {
+            generatedCode.value = `KOC_M_${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
+            const now = new Date();
+            now.setDate(now.getDate() + 7);
+            inviteCodeExpireTime.value = now.toLocaleString('zh-CN');
+
+            showCodeResult.value = true;
+            alert('邀请码生成成功');
+          } catch (error) {
+            console.error('Failed to generate code:', error);
+            alert('生成失败，请重试');
+          } finally {
+            modalLoading.value = false;
+          }
+        };
+
+        const handleCopyCode = () => {
+          navigator.clipboard.writeText(generatedCode.value).then(() => {
+            alert('已复制到剪贴板');
+          });
+        };
+
+        const handleShareCode = () => {
+          if (navigator.share) {
+            navigator.share({
+              title: '邀请加入推广团队',
+              text: `我邀请你加入推广团队，邀请码：${generatedCode.value}，有效期至 ${inviteCodeExpireTime.value}`,
+            });
+          } else {
+            alert('您的浏览器不支持分享功能');
+          }
+        };
+
+        const handleCloseModal = () => {
+          if (showCodeResult.value) {
+            showCodeResult.value = false;
+            generatedCode.value = '';
+            inviteCodeExpireTime.value = '';
+            formData.value = {
+              distributorName: '',
+              distributorPhone: '',
+              tag: '',
+            };
+          }
+          showAddModal.value = false;
+        };
+
+        const handleDeleteMember = (member) => {
+          const confirmed = confirm(`确定删除下属？\n删除后，${member.distributorName} 的邀请码将失效，但已有的邀请记录将保留`);
+          if (confirmed) {
+            alert('删除成功');
+            loadTeamMembers(true);
+          }
+        };
+
+        const handleViewDetail = (member) => {
+          alert(`查看详情: ${member.distributorName}\n\n邀请码: ${member.inviteCode}`);
+        };
+
+        onMounted(() => {
+          loadTeamMembers(true);
+        });
+
+        return {
+          currentTab,
+          filterStatus,
+          showAddModal,
+          teamMembers,
+          loading,
+          teamStats,
+          filterItems,
+          formData,
+          generatedCode,
+          inviteCodeExpireTime,
+          showCodeResult,
+          modalLoading,
+          isFormValid,
+          handleGenerateCode,
+          handleCopyCode,
+          handleShareCode,
+          handleCloseModal,
+          handleDeleteMember,
+          handleViewDetail,
+          loadTeamMembers
+        };
+      },
+      template: `
+        <div class="app">
+          <div class="top-bar">
+            <div class="top-bar-left">
+              <button @click="$router?.back?.()">←</button>
+            </div>
+            <div class="top-bar-title">生财官网·KOC推广团队</div>
+            <div class="top-bar-right">
+              <button>⋮</button>
+            </div>
+          </div>
+
+          <div class="page-content">
+            <!-- 绿色顶部区域 -->
+            <div class="header-section">
+              <div class="header-title">
+                <span class="header-title-icon">👥</span>
+                <span>团队管理</span>
+              </div>
+
+              <div class="stats-grid">
+                <div class="stat-item">
+                  <div class="stat-label">
+                    总下属数
+                    <span class="info-icon">ⓘ</span>
+                  </div>
+                  <div class="stat-value">{{ teamStats.totalMembers }}</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-label">
+                    总转化数
+                    <span class="info-icon">ⓘ</span>
+                  </div>
+                  <div class="stat-value">{{ teamStats.totalConvertCount }}</div>
+                </div>
+              </div>
+
+              <div class="action-bar">
+                <button class="action-btn" @click="showAddModal = true">
+                  <span>🔗</span>
+                  <span>生成邀请码</span>
+                </button>
+                <button class="action-btn">
+                  <span>📊</span>
+                  <span>切换历史数据</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Tab 页签 -->
+            <div class="tabs-section">
+              <div class="tabs">
+                <button
+                  class="tab"
+                  :class="{ active: currentTab === 'progress' }"
+                  @click="currentTab = 'progress'"
+                >
+                  团队进度
+                </button>
+                <button
+                  class="tab"
+                  :class="{ active: currentTab === 'board' }"
+                  @click="currentTab = 'board'"
+                >
+                  管理看板
+                </button>
+              </div>
+            </div>
+
+            <!-- 筛选按钮 -->
+            <div class="filter-bar">
+              <button
+                v-for="item in filterItems"
+                :key="item.value"
+                class="filter-btn"
+                :class="{ active: filterStatus === item.value }"
+                @click="filterStatus = item.value"
+              >
+                {{ item.label }}
+              </button>
+            </div>
+
+            <!-- 团队进度内容 -->
+            <div v-if="currentTab === 'progress'" class="list-content">
+              <div v-if="teamMembers.length === 0 && !loading" class="empty-state">
+                <div class="empty-icon">📭</div>
+                <div class="empty-text">暂无数据</div>
+              </div>
+
+              <div v-else>
+                <div v-for="member in teamMembers" :key="member.distributorId" class="team-member-card">
+                  <div class="member-header">
+                    <div class="member-info">
+                      <div class="member-name">{{ member.distributorName }}</div>
+                      <div class="member-tag">{{ member.tag }}</div>
+                      <div class="member-phone">{{ member.distributorPhone }}</div>
+                    </div>
+                    <div class="member-stats">
+                      <div class="stat">
+                        <div class="stat-num">{{ member.inviteCount }}</div>
+                        <div class="stat-name">邀请</div>
+                      </div>
+                      <div class="stat">
+                        <div class="stat-num">{{ member.convertCount }}</div>
+                        <div class="stat-name">转化</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="member-details">
+                    <div class="detail-item">
+                      <span class="detail-label">已领卡：</span>
+                      <span class="detail-value">{{ member.tryCount }}</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">已入营：</span>
+                      <span class="detail-value">{{ member.chatCount }}</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">加入时间：</span>
+                      <span class="detail-value">{{ member.joinTime }}</span>
+                    </div>
+                  </div>
+
+                  <div class="member-actions">
+                    <button class="action-btn-sm primary" @click="handleViewDetail(member)">查看邀请码</button>
+                    <button class="action-btn-sm primary" @click="handleViewDetail(member)">查看详情</button>
+                    <button class="action-btn-sm danger" @click="handleDeleteMember(member)">删除</button>
+                  </div>
+                </div>
+              </div>
+
+              <div v-if="loading" class="loading-state">
+                <div class="spinner"></div>
+                <p>加载中...</p>
+              </div>
+            </div>
+
+            <!-- 管理看板内容 -->
+            <div v-if="currentTab === 'board'" class="list-content">
+              <div class="empty-state">
+                <div class="empty-icon">📊</div>
+                <div class="empty-text">管理看板功能开发中...</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 添加下属弹窗 -->
+          <div v-if="showAddModal" class="modal-overlay" @click="handleCloseModal">
+            <div class="modal-content" @click.stop>
+              <!-- 表单阶段 -->
+              <div v-if="!showCodeResult" class="form-phase">
+                <div class="modal-header">
+                  <h2 class="modal-title">添加下属</h2>
+                  <button class="modal-close" @click="handleCloseModal">✕</button>
+                </div>
+
+                <div class="modal-body">
+                  <div class="form-group">
+                    <label class="form-label">下属名字 <span class="required">*</span></label>
+                    <input
+                      v-model="formData.distributorName"
+                      type="text"
+                      class="form-input"
+                      placeholder="请输入下属的名字"
+                      maxlength="50"
+                    />
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">下属电话 <span class="required">*</span></label>
+                    <input
+                      v-model="formData.distributorPhone"
+                      type="tel"
+                      class="form-input"
+                      placeholder="请输入下属的电话号码"
+                      maxlength="20"
+                    />
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">标签 <span class="required">*</span></label>
+                    <input
+                      v-model="formData.tag"
+                      type="text"
+                      class="form-input"
+                      placeholder="如：微信群1、朋友圈、线下活动"
+                      maxlength="50"
+                    />
+                    <div class="form-tip">用于分类管理该下属邀请来的用户</div>
+                  </div>
+                </div>
+
+                <div class="modal-footer">
+                  <button class="btn-cancel" @click="handleCloseModal">取消</button>
+                  <button
+                    class="btn-submit"
+                    :disabled="!isFormValid || modalLoading"
+                    @click="handleGenerateCode"
+                  >
+                    {{ modalLoading ? '生成中...' : '生成邀请码' }}
+                  </button>
+                </div>
+              </div>
+
+              <!-- 邀请码展示阶段 -->
+              <div v-else class="code-phase">
+                <div class="modal-header">
+                  <h2 class="modal-title">邀请码已生成</h2>
+                  <button class="modal-close" @click="handleCloseModal">✕</button>
+                </div>
+
+                <div class="modal-body code-display">
+                  <div style="background: #f9fefb; border-radius: 8px; padding: 12px; margin-bottom: 20px;">
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                      <span style="font-size: 12px; color: #999; min-width: 60px;">下属名字：</span>
+                      <span style="font-size: 14px; color: #333; font-weight: 500;">{{ formData.distributorName }}</span>
+                    </div>
+                    <div style="display: flex; align-items: center;">
+                      <span style="font-size: 12px; color: #999; min-width: 60px;">标签：</span>
+                      <span style="font-size: 14px; color: #333; font-weight: 500;">{{ formData.tag }}</span>
+                    </div>
+                  </div>
+
+                  <div class="invite-code-box">
+                    <div class="code-label">邀请码</div>
+                    <div class="code-value">{{ generatedCode }}</div>
+                    <div class="code-tip">有效期至 {{ inviteCodeExpireTime }}</div>
+                  </div>
+
+                  <div class="code-actions">
+                    <button class="code-action-btn" @click="handleCopyCode">
+                      <span class="code-action-icon">📋</span>
+                      <span>复制邀请码</span>
+                    </button>
+                    <button class="code-action-btn" @click="handleShareCode">
+                      <span class="code-action-icon">📤</span>
+                      <span>分享邀请码</span>
+                    </button>
+                  </div>
+
+                  <p style="font-size: 12px; color: #999; text-align: center; margin: 0; padding: 12px; background: #f9fefb; border-radius: 8px;">
+                    请将邀请码发送给下属，下属拿到码后即可开始推广
+                  </p>
+                </div>
+
+                <div class="modal-footer">
+                  <button class="btn-submit" style="flex: 1;" @click="handleCloseModal">完成</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `
+    });
+
+    app.mount('#app');
+  </script>
+</body>
+</html>
