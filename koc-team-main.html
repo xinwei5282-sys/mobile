@@ -635,6 +635,122 @@
       background: #ccc;
       cursor: not-allowed;
     }
+
+    /* 生成邀请码弹窗 */
+    .invite-code-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.4);
+      display: flex;
+      align-items: flex-end;
+      z-index: 100;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .invite-code-content {
+      background: #fff;
+      width: 100%;
+      border-radius: 16px 16px 0 0;
+      padding: 24px 16px;
+      animation: slideUp 0.3s ease;
+    }
+
+    .invite-code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .invite-code-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .invite-code-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: #999;
+      cursor: pointer;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .invite-code-box {
+      background: linear-gradient(135deg, #cef4f0 0%, #e0f8f5 100%);
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .invite-code-label {
+      font-size: 12px;
+      color: #999;
+      margin-bottom: 8px;
+    }
+
+    .invite-code-value {
+      font-size: 24px;
+      font-weight: 600;
+      color: #5dd4cc;
+      font-family: 'Monaco', 'Courier New', monospace;
+      letter-spacing: 2px;
+      margin-bottom: 12px;
+      word-break: break-all;
+    }
+
+    .invite-code-tip {
+      font-size: 12px;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    .invite-code-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .invite-code-btn {
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: none;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .invite-code-btn.secondary {
+      background: #f5f5f5;
+      color: #333;
+    }
+
+    .invite-code-btn.secondary:active {
+      background: #e8e8e8;
+    }
+
+    .invite-code-btn.primary {
+      background: #5dd4cc;
+      color: #fff;
+    }
+
+    .invite-code-btn.primary:active {
+      background: #4ab8b3;
+    }
   </style>
 </head>
 <body>
@@ -650,6 +766,8 @@
         const teamMembers = ref([]);
         const loading = ref(false);
         const showAddModal = ref(false);
+        const showInviteCodeModal = ref(false);
+        const generatedInviteCode = ref('');
         const formData = ref({
           name: '',
           phone: '',
@@ -789,6 +907,24 @@
           alert(`成功添加下属 ${newMember.distributorName}\n邀请码: ${newMember.inviteCode}`);
         };
 
+        const handleGenerateInviteCode = () => {
+          generatedInviteCode.value = `KOC_M_${String(Math.floor(Math.random() * 1000000)).padStart(6, '0')}`;
+          showInviteCodeModal.value = true;
+        };
+
+        const handleCloseInviteCodeModal = () => {
+          showInviteCodeModal.value = false;
+          generatedInviteCode.value = '';
+        };
+
+        const handleCopyInviteCode = () => {
+          navigator.clipboard.writeText(generatedInviteCode.value).then(() => {
+            alert('邀请码已复制到剪贴板');
+          }).catch(() => {
+            alert('复制失败，请手动复制');
+          });
+        };
+
         onMounted(() => {
           loadTeamMembers();
         });
@@ -803,6 +939,8 @@
           showAddModal,
           formData,
           formErrors,
+          showInviteCodeModal,
+          generatedInviteCode,
           goToInviteRecord,
           handleViewDetail,
           handleViewInviteCode,
@@ -810,6 +948,9 @@
           handleAddMember,
           handleCloseModal,
           handleSubmitForm,
+          handleGenerateInviteCode,
+          handleCloseInviteCodeModal,
+          handleCopyInviteCode,
         };
       },
       template: `
@@ -858,7 +999,7 @@
 
             <!-- 按钮区域 -->
             <div class="action-section">
-              <button class="action-btn">
+              <button class="action-btn" @click="handleGenerateInviteCode">
                 <span class="action-icon">🔗</span>
                 <span>生成邀请码</span>
                 <span class="action-info-icon">ⓘ</span>
@@ -1013,6 +1154,29 @@
               <div class="modal-actions">
                 <button class="modal-btn cancel" @click="handleCloseModal">取消</button>
                 <button class="modal-btn submit" @click="handleSubmitForm">添加</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 邀请码模态框 -->
+          <div v-if="showInviteCodeModal" class="invite-code-modal" @click="handleCloseInviteCodeModal">
+            <div class="invite-code-content" @click.stop>
+              <div class="invite-code-header">
+                <h2 class="invite-code-title">生成邀请码</h2>
+                <button class="invite-code-close" @click="handleCloseInviteCodeModal">×</button>
+              </div>
+
+              <div class="invite-code-box">
+                <div class="invite-code-label">您的邀请码</div>
+                <div class="invite-code-value">{{ generatedInviteCode }}</div>
+                <div class="invite-code-tip">
+                  分享此邀请码给好友，<br/>好友扫码后将自动加入您的团队
+                </div>
+              </div>
+
+              <div class="invite-code-actions">
+                <button class="invite-code-btn secondary" @click="handleCloseInviteCodeModal">关闭</button>
+                <button class="invite-code-btn primary" @click="handleCopyInviteCode">复制邀请码</button>
               </div>
             </div>
           </div>
