@@ -393,6 +393,22 @@
     }
 
     .progress-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .progress-tag {
+      display: inline-block;
+      background: #e8f5f4;
+      color: #5dd4cc;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .progress-phone {
       font-size: 12px;
       color: #999;
     }
@@ -1219,9 +1235,7 @@
             teamMembers.value = [
               {
                 distributorId: 1,
-                distributorName: '张三',
-                distributorPhone: '13812345678',
-                inviteCode: 'KOC_M_001234',
+                distributorName: '张三', 
                 tag: '微信群1',
                 joinTime: '2026-05-01 10:30:00',
                 status: 'success',
@@ -1239,8 +1253,6 @@
               {
                 distributorId: 2,
                 distributorName: '李四',
-                distributorPhone: '13912345679',
-                inviteCode: 'KOC_M_001235',
                 tag: '朋友圈',
                 joinTime: '2026-05-02 14:20:00',
                 status: 'success',
@@ -1577,7 +1589,10 @@
                       <div class="progress-header">
                         <div>
                           <div class="progress-name">{{ member.distributorName }}</div>
-                          <div class="progress-meta">{{ member.tag }} • {{ member.distributorPhone }}</div>
+                          <div class="progress-meta">
+                            <span class="progress-tag">{{ member.tag }}</span>
+                            <span class="progress-phone">{{ member.distributorPhone }}</span>
+                          </div>
                         </div>
                         <button class="progress-menu" @click="handleViewDetail(member)">查看详情 →</button>
                       </div>
