@@ -848,6 +848,131 @@
     .invite-code-btn.primary:active {
       background: #4ab8b3;
     }
+
+    /* 邀请海报弹窗 */
+    .poster-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.4);
+      display: flex;
+      align-items: flex-end;
+      z-index: 100;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .poster-content {
+      background: #fff;
+      width: 100%;
+      border-radius: 16px 16px 0 0;
+      padding: 16px;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: slideUp 0.3s ease;
+    }
+
+    .poster-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .poster-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .poster-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: #999;
+      cursor: pointer;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .poster-card {
+      background: linear-gradient(135deg, #5dd4cc 0%, #4ab8b3 100%);
+      border-radius: 16px;
+      padding: 32px 20px;
+      text-align: center;
+      color: #fff;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 16px rgba(93, 212, 204, 0.2);
+    }
+
+    .poster-member-name {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .poster-member-tag {
+      font-size: 12px;
+      opacity: 0.9;
+      margin-bottom: 20px;
+    }
+
+    .poster-code-label {
+      font-size: 12px;
+      opacity: 0.8;
+      margin-bottom: 8px;
+    }
+
+    .poster-code-value {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      word-break: break-all;
+      margin-bottom: 8px;
+    }
+
+    .poster-tips {
+      font-size: 11px;
+      opacity: 0.85;
+      line-height: 1.5;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .poster-actions {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .poster-btn {
+      height: 44px;
+      padding: 0 16px;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #5dd4cc;
+      color: #fff;
+    }
+
+    .poster-btn:active {
+      background: #4ab8b3;
+    }
   </style>
 </head>
 <body>
@@ -865,6 +990,8 @@
         const showAddModal = ref(false);
         const showInviteCodeModal = ref(false);
         const generatedInviteCode = ref('');
+        const showInvitePosterModal = ref(false);
+        const selectedMember = ref(null);
         const formData = ref({
           name: '',
           phone: '',
@@ -941,7 +1068,23 @@
         };
 
         const handleViewInviteCode = (member) => {
-          alert(`邀请码: ${member.inviteCode}`);
+          selectedMember.value = member;
+          showInvitePosterModal.value = true;
+        };
+
+        const handleClosePosterModal = () => {
+          showInvitePosterModal.value = false;
+          selectedMember.value = null;
+        };
+
+        const handleCopyMemberCode = () => {
+          if (selectedMember.value) {
+            navigator.clipboard.writeText(selectedMember.value.inviteCode).then(() => {
+              alert('邀请码已复制到剪贴板');
+            }).catch(() => {
+              alert('复制失败，请手动复制');
+            });
+          }
         };
 
         const handleDeleteMember = (member) => {
@@ -1038,6 +1181,8 @@
           formErrors,
           showInviteCodeModal,
           generatedInviteCode,
+          showInvitePosterModal,
+          selectedMember,
           goBack,
           goToInviteRecord,
           handleViewDetail,
@@ -1049,6 +1194,8 @@
           handleGenerateInviteCode,
           handleCloseInviteCodeModal,
           handleCopyInviteCode,
+          handleClosePosterModal,
+          handleCopyMemberCode,
         };
       },
       template: `
@@ -1250,6 +1397,35 @@
               <div class="invite-code-actions">
                 <button class="invite-code-btn secondary" @click="handleCloseInviteCodeModal">关闭</button>
                 <button class="invite-code-btn primary" @click="handleCopyInviteCode">复制邀请码</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 邀请海报弹窗 -->
+          <div v-if="showInvitePosterModal && selectedMember" class="poster-modal" @click="handleClosePosterModal">
+            <div class="poster-content" @click.stop>
+              <div class="poster-header">
+                <h2 class="poster-title">邀请海报</h2>
+                <button class="poster-close" @click="handleClosePosterModal">×</button>
+              </div>
+
+              <div class="poster-card">
+                <div class="poster-member-name">{{ selectedMember.distributorName }}</div>
+                <div class="poster-member-tag">{{ selectedMember.tag }}</div>
+
+                <div style="margin: 20px 0; padding: 16px 0; border-top: 1px solid rgba(255, 255, 255, 0.3); border-bottom: 1px solid rgba(255, 255, 255, 0.3);">
+                  <div class="poster-code-label">邀请码</div>
+                  <div class="poster-code-value">{{ selectedMember.inviteCode }}</div>
+                </div>
+
+                <div class="poster-tips">
+                  🎉 扫描邀请码加入团队<br/>
+                  获得独家体验卡和推荐奖励
+                </div>
+              </div>
+
+              <div class="poster-actions">
+                <button class="poster-btn" @click="handleCopyMemberCode">复制邀请码</button>
               </div>
             </div>
           </div>
