@@ -102,6 +102,20 @@
       color: #333;
     }
 
+    .title-bar-link {
+      background: none;
+      border: none;
+      color: #5dd4cc;
+      font-size: 13px;
+      cursor: pointer;
+      padding: 4px 8px;
+      font-weight: 500;
+    }
+
+    .title-bar-link:active {
+      opacity: 0.7;
+    }
+
     /* 页面内容 */
     .page-wrapper {
       flex: 1;
@@ -452,6 +466,10 @@
           return invitationList.value.filter(item => item.status === filterStatus.value);
         });
 
+        const goToTeamManagement = () => {
+          window.location.href = './koc-team-main.html';
+        };
+
         onMounted(() => {
           loadInvitations();
         });
@@ -463,6 +481,7 @@
           loading,
           invitationStats,
           filterItems,
+          goToTeamManagement,
         };
       },
       template: `
@@ -485,6 +504,7 @@
           <div class="title-bar">
             <button class="title-bar-btn">‹</button>
             <div class="title-bar-text">体验营邀请记录</div>
+            <button class="title-bar-link" @click="goToTeamManagement">团队管理 ></button>
           </div>
 
           <div class="page-wrapper">
