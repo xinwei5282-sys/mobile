@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>生财官网 - KOC 团队管理原型</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+      background: #f4f5f7;
+    }
+
+    #app {
+      width: 100%;
+      min-height: 100vh;
+    }
+
+    .app-container {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      min-height: 100vh;
+      background: #f4f5f7;
+    }
+
+    .page-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 56px;
+      background: #fff;
+      border-bottom: 1px solid #eee;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 0 16px;
+    }
+
+    .header-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+      margin: 0;
+      flex: 1;
+      text-align: center;
+    }
+
+    .page-content {
+      flex: 1;
+      overflow-y: auto;
+      padding-top: 56px;
+      padding-bottom: 60px;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: #fff;
+      border-top: 1px solid #eee;
+      display: flex;
+      z-index: 10;
+    }
+
+    .nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      color: #999;
+      font-size: 12px;
+      transition: color 0.3s ease;
+    }
+
+    .nav-item.active {
+      color: #0052ff;
+    }
+
+    .nav-icon {
+      font-size: 24px;
+    }
+
+    /* 首页样式 */
+    .home-page {
+      padding: 16px;
+    }
+
+    .banner {
+      background: linear-gradient(135deg, #0052ff 0%, #003dd4 100%);
+      border-radius: 12px;
+      padding: 24px 16px;
+      color: #fff;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .banner-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .banner-desc {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .feature-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    .feature-icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+
+    .feature-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    /* 我的页面样式 */
+    .mine-page {
+      padding: 0;
+    }
+
+    .mine-header {
+      background: #fff;
+      padding: 20px 16px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #0052ff 0%, #003dd4 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      color: #fff;
+    }
+
+    .user-details h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+      margin: 0 0 4px 0;
+    }
+
+    .user-details p {
+      font-size: 12px;
+      color: #999;
+      margin: 0;
+    }
+
+    .menu-section {
+      margin-top: 16px;
+    }
+
+    .menu-section-title {
+      font-size: 12px;
+      color: #999;
+      padding: 12px 16px 8px;
+      margin: 0;
+    }
+
+    .menu-item {
+      background: #fff;
+      border: none;
+      border-bottom: 1px solid #eee;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      cursor: pointer;
+      font-size: 14px;
+      color: #333;
+      transition: background 0.3s ease;
+    }
+
+    .menu-item:active {
+      background: #f4f5f7;
+    }
+
+    .menu-item-icon {
+      font-size: 20px;
+      margin-right: 12px;
+    }
+
+    .menu-item-content {
+      flex: 1;
+    }
+
+    .menu-item-title {
+      font-weight: 500;
+      margin-bottom: 2px;
+    }
+
+    .menu-item-desc {
+      font-size: 12px;
+      color: #999;
+    }
+
+    .menu-arrow {
+      color: #999;
+      font-size: 16px;
+    }
+
+    /* 深色主题支持 */
+    @media (prefers-color-scheme: dark) {
+      body {
+        background: #1a1a1a;
+      }
+
+      .page-header,
+      .bottom-nav,
+      .feature-card,
+      .mine-header,
+      .menu-item {
+        background: #2a2a2a;
+        border-color: #3a3a3a;
+      }
+
+      .header-title,
+      .feature-title,
+      .user-details h3,
+      .menu-item {
+        color: #fff;
+      }
+
+      .nav-item {
+        color: #999;
+      }
+
+      .nav-item.active {
+        color: #0052ff;
+      }
+
+      .user-details p,
+      .menu-item-desc,
+      .menu-section-title,
+      .menu-arrow {
+        color: #999;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+
+  <script>
+    const { createApp, ref } = Vue;
+
+    const app = createApp({
+      setup() {
+        const currentPage = ref('home');
+
+        const goToTeamManagement = () => {
+          window.location.href = './koc-team-index.html';
+        };
+
+        return {
+          currentPage,
+          goToTeamManagement
+        };
+      },
+      template: `
+        <div class="app-container">
+          <div class="page-header">
+            <div class="header-content">
+              <h1 class="header-title">{{ currentPage === 'home' ? '生财官网' : '我的' }}</h1>
+            </div>
+          </div>
+
+          <div class="page-content">
+            <!-- 首页 -->
+            <div v-if="currentPage === 'home'" class="home-page">
+              <div class="banner">
+                <div class="banner-title">欢迎来到生财官网</div>
+                <div class="banner-desc">KOC 团队管理系统原型展示</div>
+              </div>
+
+              <div class="feature-grid">
+                <div class="feature-card">
+                  <div class="feature-icon">👥</div>
+                  <div class="feature-title">团队管理</div>
+                </div>
+                <div class="feature-card">
+                  <div class="feature-icon">📊</div>
+                  <div class="feature-title">数据统计</div>
+                </div>
+                <div class="feature-card">
+                  <div class="feature-icon">💰</div>
+                  <div class="feature-title">收益管理</div>
+                </div>
+                <div class="feature-card">
+                  <div class="feature-icon">🎁</div>
+                  <div class="feature-title">激励计划</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 我的页面 -->
+            <div v-if="currentPage === 'mine'" class="mine-page">
+              <div class="mine-header">
+                <div class="user-info">
+                  <div class="user-avatar">👤</div>
+                  <div class="user-details">
+                    <h3>蔚然</h3>
+                    <p>KOC 推广员</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="menu-section">
+                <p class="menu-section-title">团队</p>
+                <button class="menu-item" @click="goToTeamManagement">
+                  <div class="menu-item-content">
+                    <div class="menu-item-icon">👥</div>
+                  </div>
+                  <div class="menu-item-content">
+                    <div class="menu-item-title">团队管理</div>
+                    <div class="menu-item-desc">管理下属、查看邀请数据</div>
+                  </div>
+                  <div class="menu-arrow">→</div>
+                </button>
+              </div>
+
+              <div class="menu-section">
+                <p class="menu-section-title">账户</p>
+                <button class="menu-item" @click="">
+                  <div class="menu-item-content">
+                    <div class="menu-item-icon">💳</div>
+                  </div>
+                  <div class="menu-item-content">
+                    <div class="menu-item-title">账户信息</div>
+                    <div class="menu-item-desc">个人资料、绑定信息</div>
+                  </div>
+                  <div class="menu-arrow">→</div>
+                </button>
+                <button class="menu-item" @click="">
+                  <div class="menu-item-content">
+                    <div class="menu-item-icon">🔔</div>
+                  </div>
+                  <div class="menu-item-content">
+                    <div class="menu-item-title">消息通知</div>
+                    <div class="menu-item-desc">邀请、转化、收益提醒</div>
+                  </div>
+                  <div class="menu-arrow">→</div>
+                </button>
+              </div>
+
+              <div class="menu-section">
+                <p class="menu-section-title">其他</p>
+                <button class="menu-item" @click="">
+                  <div class="menu-item-content">
+                    <div class="menu-item-icon">❓</div>
+                  </div>
+                  <div class="menu-item-content">
+                    <div class="menu-item-title">帮助中心</div>
+                    <div class="menu-item-desc">常见问题、使用指南</div>
+                  </div>
+                  <div class="menu-arrow">→</div>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="bottom-nav">
+            <button class="nav-item" :class="{ active: currentPage === 'home' }" @click="currentPage = 'home'">
+              <div class="nav-icon">🏠</div>
+              <div>首页</div>
+            </button>
+            <button class="nav-item" :class="{ active: currentPage === 'mine' }" @click="currentPage = 'mine'">
+              <div class="nav-icon">👤</div>
+              <div>我的</div>
+            </button>
+          </div>
+        </div>
+      `
+    });
+
+    app.mount('#app');
+  </script>
+</body>
+</html>
