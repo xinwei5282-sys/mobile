@@ -1638,14 +1638,14 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for="row in boardTableData" :key="`${row.period}-${row.memberId}`"
-                          :class="{ 'period-band': row.period % 2 === 0 }">
+                      <tr v-for="row in boardTableData" :key="row.period + '-' + row.memberId"
+                          :class="row.period % 2 === 0 ? 'period-band' : ''">
                         <td class="cell-period">第{{ row.period }}期</td>
                         <td class="cell-member">{{ row.memberName }}</td>
-                        <td class="cell-stat invited" :class="{ 'cell-zero': !row.invited }">{{ row.invited || '—' }}</td>
-                        <td class="cell-stat joined" :class="{ 'cell-zero': !row.joined }">{{ row.joined || '—' }}</td>
-                        <td class="cell-stat card" :class="{ 'cell-zero': !row.card }">{{ row.card || '—' }}</td>
-                        <td class="cell-stat success" :class="{ 'cell-zero': !row.success }">{{ row.success || '—' }}</td>
+                        <td :class="['cell-stat', 'invited', !row.invited ? 'cell-zero' : '']">{{ row.invited || '—' }}</td>
+                        <td :class="['cell-stat', 'joined', !row.joined ? 'cell-zero' : '']">{{ row.joined || '—' }}</td>
+                        <td :class="['cell-stat', 'card', !row.card ? 'cell-zero' : '']">{{ row.card || '—' }}</td>
+                        <td :class="['cell-stat', 'success', !row.success ? 'cell-zero' : '']">{{ row.success || '—' }}</td>
                       </tr>
                     </tbody>
                   </table>
