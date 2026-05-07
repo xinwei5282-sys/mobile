@@ -902,48 +902,89 @@
       justify-content: center;
     }
 
-    .poster-card {
-      background: linear-gradient(135deg, #5dd4cc 0%, #4ab8b3 100%);
-      border-radius: 16px;
-      padding: 32px 20px;
-      text-align: center;
+    .poster-image {
+      width: 100%;
+      background: linear-gradient(180deg, #2d8d83 0%, #4ab8b3 100%);
+      border-radius: 12px;
+      padding: 24px 16px;
       color: #fff;
       margin-bottom: 20px;
-      box-shadow: 0 4px 16px rgba(93, 212, 204, 0.2);
+      text-align: center;
     }
 
-    .poster-member-name {
-      font-size: 20px;
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
-
-    .poster-member-tag {
+    .poster-brand {
       font-size: 12px;
       opacity: 0.9;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
+      letter-spacing: 1px;
     }
 
-    .poster-code-label {
-      font-size: 12px;
-      opacity: 0.8;
-      margin-bottom: 8px;
-    }
-
-    .poster-code-value {
-      font-size: 28px;
+    .poster-main-title {
+      font-size: 36px;
       font-weight: 700;
-      letter-spacing: 2px;
-      word-break: break-all;
+      line-height: 1.2;
+      margin-bottom: 12px;
+      text-align: left;
+    }
+
+    .poster-description {
+      font-size: 13px;
+      opacity: 0.9;
+      margin-bottom: 16px;
+      text-align: left;
+      line-height: 1.5;
+    }
+
+    .poster-pill {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      padding: 8px 12px;
+      font-size: 12px;
+      display: inline-block;
       margin-bottom: 8px;
     }
 
-    .poster-tips {
-      font-size: 11px;
-      opacity: 0.85;
-      line-height: 1.5;
+    .poster-qr-section {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 12px;
+      padding: 12px;
       margin-top: 16px;
-      padding-top: 16px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .poster-qr-code {
+      width: 80px;
+      height: 80px;
+      background: #f0f0f0;
+      border-radius: 8px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+
+    .poster-qr-text {
+      flex: 1;
+      color: #333;
+      font-size: 11px;
+      text-align: left;
+    }
+
+    .poster-qr-title {
+      font-weight: 600;
+      font-size: 12px;
+      margin-bottom: 4px;
+      color: #5dd4cc;
+    }
+
+    .poster-hint {
+      color: #5dd4cc;
+      font-size: 12px;
+      margin-top: 16px;
+      padding-top: 12px;
       border-top: 1px solid rgba(255, 255, 255, 0.3);
     }
 
@@ -973,11 +1014,21 @@
     .poster-btn:active {
       background: #4ab8b3;
     }
+
+    .poster-btn.secondary {
+      background: #f5f5f5;
+      color: #333;
+    }
+
+    .poster-btn.secondary:active {
+      background: #e8e8e8;
+    }
   </style>
 </head>
 <body>
   <div id="app"></div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script>
     const { createApp, ref, computed, onMounted } = Vue;
 
@@ -1084,6 +1135,37 @@
             }).catch(() => {
               alert('复制失败，请手动复制');
             });
+          }
+        };
+
+        const handleDownloadPoster = async () => {
+          try {
+            const element = document.getElementById('invitePosterImage');
+            if (!element) return;
+
+            if (typeof html2canvas === 'undefined') {
+              alert('图片下载功能加载中，请稍候...');
+              return;
+            }
+
+            const canvas = await html2canvas(element, {
+              backgroundColor: '#fff',
+              scale: 2,
+              useCORS: true,
+              allowTaint: true,
+            });
+
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL('image/png');
+            link.download = `邀请海报_${selectedMember.value.distributorName}_${new Date().getTime()}.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            alert('海报已保存到下载文件夹');
+          } catch (error) {
+            console.error('下载失败:', error);
+            alert('下载失败，请重试');
           }
         };
 
@@ -1196,6 +1278,7 @@
           handleCopyInviteCode,
           handleClosePosterModal,
           handleCopyMemberCode,
+          handleDownloadPoster,
         };
       },
       template: `
@@ -1409,23 +1492,39 @@
                 <button class="poster-close" @click="handleClosePosterModal">×</button>
               </div>
 
-              <div class="poster-card">
-                <div class="poster-member-name">{{ selectedMember.distributorName }}</div>
-                <div class="poster-member-tag">{{ selectedMember.tag }}</div>
+              <!-- 海报主体（可保存为图片） -->
+              <div id="invitePosterImage" class="poster-image">
+                <div class="poster-brand">生财有术 | 第十年 80000+ 创业者同行</div>
 
-                <div style="margin: 20px 0; padding: 16px 0; border-top: 1px solid rgba(255, 255, 255, 0.3); border-bottom: 1px solid rgba(255, 255, 255, 0.3);">
-                  <div class="poster-code-label">邀请码</div>
-                  <div class="poster-code-value">{{ selectedMember.inviteCode }}</div>
+                <div class="poster-main-title">
+                  加入生财有术<br/>开启财富之路
                 </div>
 
-                <div class="poster-tips">
-                  🎉 扫描邀请码加入团队<br/>
-                  获得独家体验卡和推荐奖励
+                <div class="poster-description">
+                  {{ selectedMember.distributorName }} 邀请您加入生财有术社群，获得独家体验卡和推荐奖励。
+                </div>
+
+                <div style="text-align: center; margin-bottom: 16px;">
+                  <div class="poster-pill">深耕至第 10 年，累计 80000+ 会员加入</div>
+                </div>
+
+                <div class="poster-qr-section">
+                  <div class="poster-qr-code">📲</div>
+                  <div class="poster-qr-text">
+                    <div class="poster-qr-title">邀请码</div>
+                    <div style="font-weight: 600; font-size: 13px; color: #5dd4cc;">{{ selectedMember.inviteCode }}</div>
+                    <div style="font-size: 11px; color: #666; margin-top: 4px;">扫码免费领体验卡</div>
+                  </div>
+                </div>
+
+                <div class="poster-hint">
+                  💡 长按图片保存到相册分享
                 </div>
               </div>
 
               <div class="poster-actions">
-                <button class="poster-btn" @click="handleCopyMemberCode">复制邀请码</button>
+                <button class="poster-btn" @click="handleCopyMemberCode">📋 复制邀请码</button>
+                <button class="poster-btn secondary" @click="handleDownloadPoster">⬇️ 保存海报</button>
               </div>
             </div>
           </div>
