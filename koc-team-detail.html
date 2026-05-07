@@ -258,24 +258,28 @@
 
     .user-info {
       flex: 1;
+      display: flex;
+      flex-direction: column;
     }
 
     .user-name {
       font-size: 14px;
       font-weight: 500;
       color: #333;
-      margin-bottom: 2px;
-    }
-
-    .user-status {
-      font-size: 12px;
-      color: #5dd4cc;
-      margin-bottom: 2px;
+      margin-bottom: 4px;
     }
 
     .user-time {
       font-size: 12px;
       color: #999;
+    }
+
+    .user-status {
+      font-size: 12px;
+      color: #5dd4cc;
+      font-weight: 500;
+      white-space: nowrap;
+      text-align: right;
     }
 
     .empty-state {
@@ -543,9 +547,9 @@
                   <img :src="item.wxAvatar" :alt="item.wxName" class="user-avatar" />
                   <div class="user-info">
                     <div class="user-name">{{ item.wxName }}</div>
-                    <div class="user-status">{{ item.statusDesc }}</div>
                     <div class="user-time">{{ item.externalUserWorkAddTime }}</div>
                   </div>
+                  <div class="user-status">{{ item.statusDesc }}</div>
                 </div>
               </div>
 
