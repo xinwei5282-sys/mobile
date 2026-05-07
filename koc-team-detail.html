@@ -326,59 +326,51 @@
           { label: '未入营', value: 'room_not_enter' },
         ];
 
+        // 存储所有下属数据
+        const allMembers = {
+          1: {
+            distributorName: '张三',
+            inviteCode: 'KOC_M_001234',
+            tag: '微信群1',
+            stats: { totalInvite: 28, totalConvert: 10, tryCount: 20, chatCount: 8 },
+            invitations: [
+              { id: 1, wxName: '李四', wxAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user1', externalUserWorkAddTime: '2026-05-01 14:30:00', statusDesc: '推荐成功', status: 'xq_paid' },
+              { id: 2, wxName: '王五', wxAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user2', externalUserWorkAddTime: '2026-05-02 10:15:00', statusDesc: '已领卡', status: 'xq_tried' },
+              { id: 3, wxName: '赵六', wxAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user3', externalUserWorkAddTime: '2026-05-03 09:45:00', statusDesc: '已入营', status: 'room_entered' },
+              { id: 4, wxName: '孙七', wxAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user4', externalUserWorkAddTime: '2026-05-04 15:20:00', statusDesc: '未入营', status: 'room_not_enter' },
+            ]
+          },
+          2: {
+            distributorName: '李四',
+            inviteCode: 'KOC_M_001235',
+            tag: '朋友圈',
+            stats: { totalInvite: 35, totalConvert: 15, tryCount: 25, chatCount: 12 },
+            invitations: [
+              { id: 5, wxName: '田八', wxAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user5', externalUserWorkAddTime: '2026-05-05 11:00:00', statusDesc: '推荐成功', status: 'xq_paid' },
+              { id: 6, wxName: '周九', wxAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user6', externalUserWorkAddTime: '2026-05-06 13:30:00', statusDesc: '已领卡', status: 'xq_tried' },
+              { id: 7, wxName: '吴十', wxAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user7', externalUserWorkAddTime: '2026-05-07 09:15:00', statusDesc: '已入营', status: 'room_entered' },
+            ]
+          }
+        };
+
         const loadInvitationList = async (isForce = false) => {
           if (loading.value) return;
 
           loading.value = true;
           try {
             if (isForce) {
-              memberInfo.value = {
-                distributorName: '张三',
-                inviteCode: 'KOC_M_001234',
-                tag: '微信群1',
-              };
+              const memberId = distributorId.value;
+              const memberData = allMembers[memberId];
 
-              stats.value = {
-                totalInvite: 28,
-                totalConvert: 10,
-                tryCount: 20,
-                chatCount: 8,
-              };
-
-              invitationList.value = [
-                {
-                  id: 1,
-                  wxName: '李四',
-                  wxAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user1',
-                  externalUserWorkAddTime: '2026-05-01 14:30:00',
-                  statusDesc: '推荐成功',
-                  status: 'xq_paid',
-                },
-                {
-                  id: 2,
-                  wxName: '王五',
-                  wxAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user2',
-                  externalUserWorkAddTime: '2026-05-02 10:15:00',
-                  statusDesc: '已领卡',
-                  status: 'xq_tried',
-                },
-                {
-                  id: 3,
-                  wxName: '赵六',
-                  wxAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user3',
-                  externalUserWorkAddTime: '2026-05-03 09:45:00',
-                  statusDesc: '已入营',
-                  status: 'room_entered',
-                },
-                {
-                  id: 4,
-                  wxName: '孙七',
-                  wxAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user4',
-                  externalUserWorkAddTime: '2026-05-04 15:20:00',
-                  statusDesc: '未入营',
-                  status: 'room_not_enter',
-                },
-              ];
+              if (memberData) {
+                memberInfo.value = {
+                  distributorName: memberData.distributorName,
+                  inviteCode: memberData.inviteCode,
+                  tag: memberData.tag,
+                };
+                stats.value = memberData.stats;
+                invitationList.value = memberData.invitations;
+              }
             }
           } catch (error) {
             console.error('Failed to load invitations:', error);
@@ -401,7 +393,20 @@
           return stats.value;
         });
 
+        const filteredInvitations = computed(() => {
+          if (!filterStatus.value) {
+            return invitationList.value;
+          }
+          return invitationList.value.filter(item => item.status === filterStatus.value);
+        });
+
         onMounted(() => {
+          // 从 URL 参数读取下属 ID
+          const params = new URLSearchParams(window.location.search);
+          const id = params.get('id');
+          if (id) {
+            distributorId.value = id;
+          }
           loadInvitationList(true);
         });
 
@@ -409,7 +414,7 @@
           memberInfo,
           stats,
           filterStatus,
-          invitationList,
+          invitationList: filteredInvitations,
           loading,
           filterItems,
           handleFilterChange,

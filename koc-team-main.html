@@ -913,7 +913,7 @@
         };
 
         const handleViewDetail = (member) => {
-          alert(`查看详情: ${member.distributorName}\n邀请码: ${member.inviteCode}`);
+          window.location.href = `./koc-team-detail.html?id=${member.distributorId}&code=${member.inviteCode}`;
         };
 
         const handleViewInviteCode = (member) => {
