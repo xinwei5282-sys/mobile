@@ -1,45 +1,39 @@
 /**
- * PRD Loader — 异步加载外部 PRD 内容并交给 prd-editor 初始化
+ * PRD Loader — 从 window.PRD_CONTENTS 读取 PRD 内容并初始化编辑器
  *
  * 用法：
- *   <aside class="prd-panel" data-prd-key="team-main" data-prd-src="prd/team-main.html"></aside>
+ *   1. 引入对应的 PRD 数据脚本：<script src="prd/team-main.js"></script>
+ *      该脚本会注册：window.PRD_CONTENTS['team-main'] = '<HTML 字符串>';
+ *   2. 主页面加空 panel：<aside class="prd-panel" data-prd-key="team-main"></aside>
+ *   3. 引入 prd-editor.js + prd-loader.js
  *
- * 加载流程：
- *   1. 找到所有带 data-prd-src 的 .prd-panel
- *   2. fetch 内容注入到 panel.innerHTML
- *   3. 调用 window.PRDEditor.initPanel(panel) 启用编辑能力
+ * 优点：
+ *   - 不依赖 fetch，file:// 协议下也能工作
+ *   - PRD 内容独立于主 HTML，便于维护
  */
 (function () {
   'use strict';
 
-  function showLoading(panel) {
-    panel.innerHTML = '<div class="prd-loading">PRD 加载中…</div>';
+  function showError(panel, key) {
+    panel.innerHTML = '<div class="prd-loading">PRD 内容未注册：' + key + '<br>请检查是否引入对应的 prd/*.js 数据脚本</div>';
   }
 
-  function showError(panel, src, err) {
-    panel.innerHTML = '<div class="prd-loading">PRD 加载失败：' + src + '<br>' +
-      (err && err.message ? err.message : '') + '</div>';
-  }
-
-  async function loadPanel(panel) {
-    const src = panel.dataset.prdSrc;
-    if (!src) return;
-    showLoading(panel);
-    try {
-      const res = await fetch(src, { cache: 'no-cache' });
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      panel.innerHTML = await res.text();
-      if (window.PRDEditor && typeof window.PRDEditor.initPanel === 'function') {
-        window.PRDEditor.initPanel(panel);
-      }
-    } catch (err) {
-      console.warn('PRD Loader:', src, err);
-      showError(panel, src, err);
+  function loadPanel(panel) {
+    const key = panel.dataset.prdKey;
+    if (!key) return;
+    const content = window.PRD_CONTENTS && window.PRD_CONTENTS[key];
+    if (!content) {
+      showError(panel, key);
+      return;
+    }
+    panel.innerHTML = content;
+    if (window.PRDEditor && typeof window.PRDEditor.initPanel === 'function') {
+      window.PRDEditor.initPanel(panel);
     }
   }
 
   function initAll() {
-    document.querySelectorAll('.prd-panel[data-prd-src]').forEach(loadPanel);
+    document.querySelectorAll('.prd-panel[data-prd-key]').forEach(loadPanel);
   }
 
   if (document.readyState === 'loading') {

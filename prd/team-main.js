@@ -1,3 +1,5 @@
+window.PRD_CONTENTS = window.PRD_CONTENTS || {};
+window.PRD_CONTENTS['team-main'] = `
 <div class="prd-mobile-header">
   <div>
     <h2 class="prd-title">团队管理</h2>
@@ -106,3 +108,4 @@
   <div class="prd-item">提示："确定删除该团队成员？"</div>
   <div class="prd-item">两个按钮：取消 / 删除（红色）</div>
 </div>
+`;
