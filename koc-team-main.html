@@ -860,12 +860,7 @@
           totalInviteCount: 0,
         });
 
-        const filterItems = [
-          { label: '全部', value: '' },
-          { label: '邀请成功', value: 'success' },
-          { label: '邀请中', value: 'inviting' },
-          { label: '已删除', value: 'deleted' },
-        ];
+        const filterItems = [];
 
         const loadTeamMembers = () => {
           loading.value = true;
@@ -1104,7 +1099,7 @@
                 </button>
               </div>
 
-              <div class="filters-section">
+              <div v-if="filterItems.length > 0" class="filters-section">
                 <button
                   v-for="item in filterItems"
                   :key="item.value"
