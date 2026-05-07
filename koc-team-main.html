@@ -1107,6 +1107,51 @@
     .delete-confirm-btn.delete:active {
       background: #ff5252;
     }
+    /* 营期看板表格 */
+    .board-table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      font-size: 12px;
+      background: #fff;
+    }
+
+    .board-table .col-period { width: 22%; }
+    .board-table .col-member { width: 18%; }
+    .board-table .col-stat { width: 15%; }
+
+    .board-table thead {
+      background: #f9f9f9;
+    }
+
+    .board-table th {
+      padding: 10px 2px;
+      text-align: center;
+      font-weight: 600;
+      color: #333;
+      font-size: 11px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .board-table td {
+      padding: 12px 2px;
+      text-align: center;
+      border-bottom: 1px solid #eee;
+    }
+
+    .board-table .cell-period {
+      color: #5dd4cc;
+      font-weight: 600;
+    }
+
+    .board-table .cell-member {
+      color: #333;
+    }
+
+    .board-table .cell-stat {
+      color: #5dd4cc;
+      font-weight: 600;
+    }
   </style>
 </head>
 <body>
@@ -1551,26 +1596,34 @@
                 </div>
 
                 <!-- 管理看板 -->
-                <div v-if="currentTab === 'board'" style="background: #fff;">
-                  <table style="width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 12px;">
-                    <thead style="background: #f9f9f9;">
+                <div v-if="currentTab === 'board'">
+                  <table class="board-table">
+                    <colgroup>
+                      <col class="col-period">
+                      <col class="col-member">
+                      <col class="col-stat">
+                      <col class="col-stat">
+                      <col class="col-stat">
+                      <col class="col-stat">
+                    </colgroup>
+                    <thead>
                       <tr>
-                        <th style="padding: 10px 4px; text-align: center; font-weight: 600; color: #333; font-size: 11px; border-bottom: 1px solid #eee; width: 22%;">营期</th>
-                        <th style="padding: 10px 4px; text-align: center; font-weight: 600; color: #333; font-size: 11px; border-bottom: 1px solid #eee; width: 18%;">成员</th>
-                        <th style="padding: 10px 2px; text-align: center; font-weight: 600; color: #333; font-size: 11px; border-bottom: 1px solid #eee; width: 15%;">已邀请</th>
-                        <th style="padding: 10px 2px; text-align: center; font-weight: 600; color: #333; font-size: 11px; border-bottom: 1px solid #eee; width: 15%;">已入营</th>
-                        <th style="padding: 10px 2px; text-align: center; font-weight: 600; color: #333; font-size: 11px; border-bottom: 1px solid #eee; width: 15%;">已领卡</th>
-                        <th style="padding: 10px 2px; text-align: center; font-weight: 600; color: #333; font-size: 11px; border-bottom: 1px solid #eee; width: 15%;">推荐成功</th>
+                        <th>营期</th>
+                        <th>成员</th>
+                        <th>已邀请</th>
+                        <th>已入营</th>
+                        <th>已领卡</th>
+                        <th>推荐成功</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for="(row, idx) in boardTableData" :key="idx">
-                        <td style="padding: 12px 4px; text-align: center; color: #5dd4cc; font-weight: 600; border-bottom: 1px solid #eee;">第{{ row.period }}期</td>
-                        <td style="padding: 12px 4px; text-align: center; color: #333; border-bottom: 1px solid #eee;">{{ row.memberName }}</td>
-                        <td style="padding: 12px 2px; text-align: center; color: #5dd4cc; font-weight: 600; border-bottom: 1px solid #eee;">{{ row.invited }}</td>
-                        <td style="padding: 12px 2px; text-align: center; color: #5dd4cc; font-weight: 600; border-bottom: 1px solid #eee;">{{ row.joined }}</td>
-                        <td style="padding: 12px 2px; text-align: center; color: #5dd4cc; font-weight: 600; border-bottom: 1px solid #eee;">{{ row.card }}</td>
-                        <td style="padding: 12px 2px; text-align: center; color: #5dd4cc; font-weight: 600; border-bottom: 1px solid #eee;">{{ row.success }}</td>
+                      <tr v-for="row in boardTableData" :key="`${row.period}-${row.memberId}`">
+                        <td class="cell-period">第{{ row.period }}期</td>
+                        <td class="cell-member">{{ row.memberName }}</td>
+                        <td class="cell-stat">{{ row.invited }}</td>
+                        <td class="cell-stat">{{ row.joined }}</td>
+                        <td class="cell-stat">{{ row.card }}</td>
+                        <td class="cell-stat">{{ row.success }}</td>
                       </tr>
                     </tbody>
                   </table>
