@@ -1790,22 +1790,11 @@
     });
 
     app.mount('#app');
-
-    function togglePRD() {
-      document.body.classList.toggle('prd-on');
-    }
   </script>
 
-  <!-- PRD 标注按钮 -->
-  <button class="prd-toggle" onclick="togglePRD()">
-    <span class="dot"></span>PRD
-  </button>
-
-  <!-- PRD 面板 -->
-  <aside class="prd-panel" data-prd-key="team-main"></aside>
-
+  <!-- PRD 标注（数据 + 编辑器 + 注入器） -->
   <script src="prd/team-main.js"></script>
   <script src="prd-editor.js"></script>
-  <script src="prd-loader.js"></script>
+  <script src="prd-init.js" data-prd-key="team-main"></script>
 </body>
 </html>
