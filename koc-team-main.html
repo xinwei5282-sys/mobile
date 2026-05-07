@@ -1165,6 +1165,12 @@
                 tryCount: 20,
                 chatCount: 8,
                 notEnterCount: 20,
+                periods: [
+                  { num: 113, invited: 5, joined: 3, card: 2, success: 1 },
+                  { num: 112, invited: 8, joined: 5, card: 3, success: 2 },
+                  { num: 111, invited: 6, joined: 4, card: 2, success: 1 },
+                  { num: 110, invited: 9, joined: 8, card: 1, success: 0 },
+                ],
               },
               {
                 distributorId: 2,
@@ -1178,6 +1184,12 @@
                 tryCount: 25,
                 chatCount: 12,
                 notEnterCount: 23,
+                periods: [
+                  { num: 113, invited: 7, joined: 5, card: 3, success: 2 },
+                  { num: 112, invited: 6, joined: 4, card: 2, success: 1 },
+                  { num: 111, invited: 8, joined: 6, card: 4, success: 2 },
+                  { num: 110, invited: 7, joined: 5, card: 2, success: 1 },
+                ],
               },
             ];
 
@@ -1344,6 +1356,27 @@
           });
         };
 
+        const boardTableData = computed(() => {
+          const rows = [];
+          teamMembers.value.forEach(m => {
+            (m.periods || []).forEach(p => {
+              rows.push({
+                period: p.num,
+                memberName: m.distributorName,
+                memberId: m.distributorId,
+                invited: p.invited,
+                joined: p.joined,
+                card: p.card,
+                success: p.success
+              });
+            });
+          });
+          return rows.sort((a, b) => {
+            if (a.period !== b.period) return b.period - a.period;
+            return a.memberId - b.memberId;
+          });
+        });
+
         onMounted(() => {
           loadTeamMembers();
         });
@@ -1355,6 +1388,7 @@
           loading,
           teamStats,
           filterItems,
+          boardTableData,
           showAddModal,
           formData,
           formErrors,
@@ -1517,9 +1551,29 @@
                 </div>
 
                 <!-- 管理看板 -->
-                <div v-if="currentTab === 'board'" class="empty-state">
-                  <div class="empty-icon">📊</div>
-                  <div class="empty-text">功能开发中...</div>
+                <div v-if="currentTab === 'board'" style="background: #fff; overflow-x: auto;">
+                  <table style="width: 100%; border-collapse: collapse; min-width: 540px; font-size: 13px;">
+                    <thead style="background: #f9f9f9;">
+                      <tr>
+                        <th style="padding: 12px 8px; text-align: left; font-weight: 600; color: #333; font-size: 12px; border-bottom: 1px solid #eee;">营期</th>
+                        <th style="padding: 12px 8px; text-align: left; font-weight: 600; color: #333; font-size: 12px; border-bottom: 1px solid #eee;">成员</th>
+                        <th style="padding: 12px 8px; text-align: center; font-weight: 600; color: #333; font-size: 12px; border-bottom: 1px solid #eee;">已邀请</th>
+                        <th style="padding: 12px 8px; text-align: center; font-weight: 600; color: #333; font-size: 12px; border-bottom: 1px solid #eee;">已入营</th>
+                        <th style="padding: 12px 8px; text-align: center; font-weight: 600; color: #333; font-size: 12px; border-bottom: 1px solid #eee;">已领卡</th>
+                        <th style="padding: 12px 8px; text-align: center; font-weight: 600; color: #333; font-size: 12px; border-bottom: 1px solid #eee;">推荐成功</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="(row, idx) in boardTableData" :key="idx">
+                        <td style="padding: 12px 8px; color: #5dd4cc; font-weight: 600; border-bottom: 1px solid #eee;">第{{ row.period }}期</td>
+                        <td style="padding: 12px 8px; color: #333; border-bottom: 1px solid #eee;">{{ row.memberName }}</td>
+                        <td style="padding: 12px 8px; text-align: center; color: #5dd4cc; font-weight: 600; border-bottom: 1px solid #eee;">{{ row.invited }}</td>
+                        <td style="padding: 12px 8px; text-align: center; color: #5dd4cc; font-weight: 600; border-bottom: 1px solid #eee;">{{ row.joined }}</td>
+                        <td style="padding: 12px 8px; text-align: center; color: #5dd4cc; font-weight: 600; border-bottom: 1px solid #eee;">{{ row.card }}</td>
+                        <td style="padding: 12px 8px; text-align: center; color: #5dd4cc; font-weight: 600; border-bottom: 1px solid #eee;">{{ row.success }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
