@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>邀请明细 - KOC 团队管理</title>
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <link rel="stylesheet" href="prd-editor.css">
+  <link rel="stylesheet" href="prd-panel.css">
   <style>
     * {
       margin: 0;
@@ -147,6 +149,13 @@
       margin: 0 0 4px 0;
     }
 
+    .member-meta {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
     .member-tag {
       font-size: 12px;
       background: #e8f5f4;
@@ -155,6 +164,11 @@
       padding: 2px 8px;
       display: inline-block;
       margin: 0;
+    }
+
+    .member-join-time {
+      font-size: 12px;
+      color: #999;
     }
 
 
@@ -331,6 +345,7 @@
           distributorName: '',
           inviteCode: '',
           tag: '',
+          joinTime: '',
         });
 
         const stats = ref({
@@ -358,6 +373,7 @@
             distributorName: '张三',
             inviteCode: 'KOC_M_001234',
             tag: '微信群1',
+            joinTime: '2026-05-01 10:30:00',
             stats: { totalInvite: 28, totalConvert: 10, tryCount: 20, chatCount: 8 },
             invitations: [
               { id: 1, wxName: '李四', wxAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user1', externalUserWorkAddTime: '2026-05-01 14:30:00', statusDesc: '推荐成功', status: 'xq_paid' },
@@ -370,6 +386,7 @@
             distributorName: '李四',
             inviteCode: 'KOC_M_001235',
             tag: '朋友圈',
+            joinTime: '2026-05-02 14:20:00',
             stats: { totalInvite: 35, totalConvert: 15, tryCount: 25, chatCount: 12 },
             invitations: [
               { id: 5, wxName: '田八', wxAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user5', externalUserWorkAddTime: '2026-05-05 11:00:00', statusDesc: '推荐成功', status: 'xq_paid' },
@@ -393,6 +410,7 @@
                   distributorName: memberData.distributorName,
                   inviteCode: memberData.inviteCode,
                   tag: memberData.tag,
+                  joinTime: memberData.joinTime,
                 };
                 stats.value = memberData.stats;
                 invitationList.value = memberData.invitations;
@@ -478,7 +496,10 @@
               <div class="info-header">
                 <div>
                   <h2 class="member-name">{{ memberInfo.distributorName }}</h2>
-                  <p class="member-tag">{{ memberInfo.tag }}</p>
+                  <div class="member-meta">
+                    <span class="member-tag">{{ memberInfo.tag }}</span>
+                    <span v-if="memberInfo.joinTime" class="member-join-time">加入时间：{{ memberInfo.joinTime }}</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -545,5 +566,10 @@
 
     app.mount('#app');
   </script>
+
+  <!-- PRD 标注（数据 + 编辑器 + 注入器） -->
+  <script src="prd/team-detail.js"></script>
+  <script src="prd-editor.js"></script>
+  <script src="prd-init.js" data-prd-key="team-detail"></script>
 </body>
 </html>

@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>邀请记录 - 生财官网</title>
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <link rel="stylesheet" href="prd-editor.css">
+  <link rel="stylesheet" href="prd-panel.css">
   <style>
     * {
       margin: 0;
@@ -628,5 +630,10 @@
 
     app.mount('#app');
   </script>
+
+  <!-- PRD 标注（数据 + 编辑器 + 注入器） -->
+  <script src="prd/team-index.js"></script>
+  <script src="prd-editor.js"></script>
+  <script src="prd-init.js" data-prd-key="team-index"></script>
 </body>
 </html>

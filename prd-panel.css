@@ -126,6 +126,7 @@ body.prd-on .prd-panel {
   body {
     display: flex !important;
     align-items: flex-start;
+    justify-content: center;
     gap: 20px;
     padding: 20px;
     min-height: 100vh;
