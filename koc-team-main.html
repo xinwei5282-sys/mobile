@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>团队管理 - 生财官网</title>
+  <title>渠道管理 - 生财官网</title>
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   <link rel="stylesheet" href="prd-editor.css">
   <link rel="stylesheet" href="prd-panel.css">
@@ -486,6 +486,17 @@
     .member-phone {
       font-size: 12px;
       color: #999;
+    }
+
+    .expired-badge {
+      display: inline-block;
+      font-size: 10px;
+      background: #ffebee;
+      color: #d32f2f;
+      border-radius: 3px;
+      padding: 2px 6px;
+      margin-left: 4px;
+      font-weight: 500;
     }
 
     .member-stats {
@@ -1225,9 +1236,10 @@
             teamMembers.value = [
               {
                 distributorId: 1,
-                distributorName: '张三', 
+                distributorName: '张三',
                 tag: '微信群1',
                 joinTime: '2026-05-01 10:30:00',
+                expiredTime: '2026-05-10 15:00:00',
                 status: 'success',
                 inviteCount: 28,
                 tryCount: 20,
@@ -1344,10 +1356,10 @@
 
         const confirmDelete = () => {
           if (memberToDelete.value) {
-            alert('删除成功');
+            memberToDelete.value.expiredTime = new Date().toLocaleString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }).replace(/\//g, '-');
+            alert('作废成功');
             showDeleteConfirmModal.value = false;
             memberToDelete.value = null;
-            loadTeamMembers();
           }
         };
 
@@ -1359,7 +1371,7 @@
         const validateForm = () => {
           formErrors.value = {};
           if (!formData.value.name.trim()) {
-            formErrors.value.name = '请输入成员名称';
+            formErrors.value.name = '请输入渠道名称';
           }
           if (!formData.value.tag.trim()) {
             formErrors.value.tag = '请选择或输入标签';
@@ -1400,7 +1412,7 @@
           teamStats.value.totalMembers += 1;
 
           handleCloseModal();
-          alert(`成功添加团队成员 ${newMember.distributorName}\n邀请码: ${newMember.inviteCode}`);
+          alert(`成功添加渠道 ${newMember.distributorName}`);
         };
 
         const handleGenerateInviteCode = () => {
@@ -1501,16 +1513,16 @@
           <div class="title-bar">
             <div class="title-bar-left">
               <button class="title-bar-btn" @click="goBack">‹</button>
-              <div class="title-bar-text">团队管理</div>
+              <div class="title-bar-text">渠道管理</div>
             </div>
-            <button class="title-bar-link" @click="handleAddMember">➕ 团队成员</button>
+            <button class="title-bar-link" @click="handleAddMember">➕ 添加渠道</button>
           </div>
 
           <div class="page-wrapper">
             <!-- 统计区域 -->
             <div class="stats-section">
               <div class="stat-col">
-                <div class="stat-label">团队人数</div>
+                <div class="stat-label">渠道数</div>
                 <div class="stat-value">{{ teamStats.totalMembers }}</div>
               </div>
               <div class="stat-col">
@@ -1530,7 +1542,7 @@
                   :class="{ active: currentTab === 'progress' }"
                   @click="currentTab = 'progress'"
                 >
-                  团队进度
+                  渠道明细
                 </button>
                 <button
                   class="tab"
@@ -1557,7 +1569,7 @@
             <!-- 内容区域 -->
             <div class="content-area">
               <div class="list-container">
-                <!-- 团队进度 -->
+                <!-- 渠道明细 -->
                 <div v-if="currentTab === 'progress'">
                   <div v-if="teamMembers.length === 0 && !loading" class="empty-state">
                     <div class="empty-icon">📋</div>
@@ -1571,6 +1583,7 @@
                           <div class="progress-name-row">
                             <span class="progress-name">{{ member.distributorName }}</span>
                             <span class="progress-tag">{{ member.tag }}</span>
+                            <span v-if="member.expiredTime" class="expired-badge">已作废</span>
                           </div>
                           <div class="progress-phone">{{ member.distributorPhone }}</div>
                         </div>
@@ -1598,7 +1611,7 @@
                       <div class="progress-actions">
                         <button class="action-btn-sm" @click="handleViewDetail(member)">查看详情</button>
                         <button class="action-btn-sm primary" @click="handleViewInviteCode(member)">查看邀请码</button>
-                        <button class="action-btn-sm danger" @click="handleDeleteMember(member)">删除</button>
+                        <button class="action-btn-sm danger" @click="handleDeleteMember(member)">作废</button>
                       </div>
                     </div>
                   </div>
@@ -1651,17 +1664,17 @@
           <div v-if="showAddModal" class="modal-overlay" @click="handleCloseModal">
             <div class="modal-content" @click.stop>
               <div class="modal-header">
-                <h2 class="modal-title">添加团队成员</h2>
+                <h2 class="modal-title">添加渠道</h2>
                 <button class="modal-close" @click="handleCloseModal">×</button>
               </div>
 
               <div class="form-group">
-                <label class="form-label">成员名称</label>
+                <label class="form-label">渠道名称</label>
                 <input
                   v-model="formData.name"
                   type="text"
                   class="form-input"
-                  placeholder="请输入成员名称"
+                  placeholder="请输入渠道名称"
                 />
                 <div v-if="formErrors.name" class="form-error">{{ formErrors.name }}</div>
               </div>
@@ -1680,28 +1693,6 @@
               <div class="modal-actions">
                 <button class="modal-btn cancel" @click="handleCloseModal">取消</button>
                 <button class="modal-btn submit" @click="handleSubmitForm">添加</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- 邀请码模态框 -->
-          <div v-if="showInviteCodeModal" class="invite-code-modal" @click="handleCloseInviteCodeModal">
-            <div class="invite-code-content" @click.stop>
-              <div class="invite-code-header">
-                <h2 class="invite-code-title">生成邀请码</h2>
-                <button class="invite-code-close" @click="handleCloseInviteCodeModal">×</button>
-              </div>
-
-              <div class="invite-code-box">
-                <div class="invite-code-label">您的邀请码</div>
-                <div class="invite-code-value">{{ generatedInviteCode }}</div>
-                <div class="invite-code-tip">
-                  分享此邀请码给好友，<br/>好友扫码后将自动加入您的团队
-                </div>
-              </div>
-
-              <div class="invite-code-actions">
-                <button class="invite-code-btn secondary" @click="handleCloseInviteCodeModal">关闭</button>
               </div>
             </div>
           </div>
@@ -1750,17 +1741,17 @@
             </div>
           </div>
 
-          <!-- 删除确认弹窗 -->
+          <!-- 作废确认弹窗 -->
           <div v-if="showDeleteConfirmModal && memberToDelete" class="delete-confirm-modal" @click="cancelDelete">
             <div class="delete-confirm-content" @click.stop>
               <div class="delete-confirm-icon">⚠️</div>
-              <h2 class="delete-confirm-title">确定删除？</h2>
+              <h2 class="delete-confirm-title">确定作废？</h2>
               <p class="delete-confirm-message">
-                删除后，{{ memberToDelete.distributorName }} 的邀请码将失效，但已有的邀请记录将保留。
+                作废后，{{ memberToDelete.distributorName }} 的渠道码将失效，但已有的邀请记录将保留。
               </p>
               <div class="delete-confirm-actions">
                 <button class="delete-confirm-btn cancel" @click="cancelDelete">取消</button>
-                <button class="delete-confirm-btn delete" @click="confirmDelete">删除</button>
+                <button class="delete-confirm-btn delete" @click="confirmDelete">确认</button>
               </div>
             </div>
           </div>
