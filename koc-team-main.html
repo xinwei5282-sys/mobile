@@ -378,8 +378,15 @@
     .progress-name-row {
       display: flex;
       align-items: center;
+      justify-content: space-between;
       gap: 8px;
       margin-bottom: 4px;
+    }
+
+    .progress-name-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
     .progress-name {
@@ -495,8 +502,8 @@
       color: #d32f2f;
       border-radius: 3px;
       padding: 2px 6px;
-      margin-left: 4px;
       font-weight: 500;
+      white-space: nowrap;
     }
 
     .member-stats {
@@ -1581,8 +1588,10 @@
                       <div class="progress-header">
                         <div>
                           <div class="progress-name-row">
-                            <span class="progress-name">{{ member.distributorName }}</span>
-                            <span class="progress-tag">{{ member.tag }}</span>
+                            <div class="progress-name-left">
+                              <span class="progress-name">{{ member.distributorName }}</span>
+                              <span class="progress-tag">{{ member.tag }}</span>
+                            </div>
                             <span v-if="member.expiredTime" class="expired-badge">已作废</span>
                           </div>
                           <div class="progress-phone">{{ member.distributorPhone }}</div>
