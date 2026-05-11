@@ -171,6 +171,24 @@
       color: #999;
     }
 
+    .expired-badge {
+      display: inline-block;
+      font-size: 11px;
+      background: #ffebee;
+      color: #d32f2f;
+      border-radius: 3px;
+      padding: 2px 6px;
+      margin-left: 4px;
+      font-weight: 500;
+    }
+
+    .time-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
 
     .stats-section {
       display: grid;
@@ -346,6 +364,7 @@
           inviteCode: '',
           tag: '',
           joinTime: '',
+          expiredTime: null,
         });
 
         const stats = ref({
@@ -374,6 +393,7 @@
             inviteCode: 'KOC_M_001234',
             tag: '微信群1',
             joinTime: '2026-05-01 10:30:00',
+            expiredTime: '2026-05-10 15:00:00',
             stats: { totalInvite: 28, totalConvert: 10, tryCount: 20, chatCount: 8 },
             invitations: [
               { id: 1, wxName: '李四', wxAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user1', externalUserWorkAddTime: '2026-05-01 14:30:00', statusDesc: '推荐成功', status: 'xq_paid' },
@@ -411,6 +431,7 @@
                   inviteCode: memberData.inviteCode,
                   tag: memberData.tag,
                   joinTime: memberData.joinTime,
+                  expiredTime: memberData.expiredTime || null,
                 };
                 stats.value = memberData.stats;
                 invitationList.value = memberData.invitations;
@@ -498,7 +519,10 @@
                   <h2 class="member-name">{{ memberInfo.distributorName }}</h2>
                   <div class="member-meta">
                     <span class="member-tag">{{ memberInfo.tag }}</span>
-                    <span v-if="memberInfo.joinTime" class="member-join-time">加入时间：{{ memberInfo.joinTime }}</span>
+                    <div class="time-info">
+                      <span v-if="memberInfo.joinTime" class="member-join-time">创建：{{ memberInfo.joinTime }}</span>
+                      <span v-if="memberInfo.expiredTime" class="member-join-time">作废：{{ memberInfo.expiredTime }}<span class="expired-badge">已作废</span></span>
+                    </div>
                   </div>
                 </div>
               </div>
